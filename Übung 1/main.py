@@ -1,6 +1,7 @@
 from lex_test import lexer
 
-lexer.input("5")
+lexer.input("function fact(n) return n > 0 and n * fact(n-1) or 1 end")
 
-for token in lexer:
-    print(token)
+for tokens in lexer:
+    print(tokens)
+

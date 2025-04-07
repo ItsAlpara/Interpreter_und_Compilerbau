@@ -4,7 +4,8 @@ tokens = ['NUMBER', 'PLUS', 'MINUS','FLOAT']
 
 t_PLUS      = r'\+'
 t_MINUS     = r'-'
-t_NUMBER = r'\d+'
+t_NUMBER    = r'\d+'
+
 
 def t_FLOAT(t):
     r'\d+\.\d+'
