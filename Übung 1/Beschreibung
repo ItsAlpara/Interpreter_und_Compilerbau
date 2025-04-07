@@ -1,0 +1,5 @@
+Im Lex die Definition der Tokens in die Funktion schreiben. Dadurch wird gewährleistet, dass diese
+nicht falsch interpretiert werden. Ansonsten wird der längste Match genommen.
+
+Es müssen alle wichtigen tokens definiert werden (Zahlen, Operationen, etc.)
+

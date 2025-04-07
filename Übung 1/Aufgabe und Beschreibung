@@ -1,0 +1,21 @@
+Übung 1
+Aufgaben
+
+1 Installieren Sie sich lokal auf Ihrem Rechner (falls nicht ohnehin vorhanden):
+• eine Python-Entwicklungsumgebung   done
+• die Python-Bibliothek ply          done
+
+2 Vollziehen Sie das Lexing-Beispiel aus der ply-Dokumentation unter
+https://ply.readthedocs.io/en/latest/ply.html#lex-example nach.
+
+3 Besuchen Sie die Seite
+https://rosettacode.org.
+Suchen Sie sich eine Programmiersprache aus, die Sie bisher nicht kennen,
+die Ihnen aber interessant erscheint und betrachten Sie die Implementierung
+eines Algorithmus in dieser Sprache (z.B.factorial, quicksort, fizz buzz,...)
+
+https://rosettacode.org/wiki/Category:   Lua  <- Gewählt
+
+• Welche Tokens gibt es?
+• Schreiben Sie einen Lexer, der aus dem Programm einen Token-Strom erzeugt
+  und diesen Token f¨ur Token ausgibt.
