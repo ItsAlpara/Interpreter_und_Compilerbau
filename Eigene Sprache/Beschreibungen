@@ -1,0 +1,46 @@
+  0|[1-9][0-9]              yes
+| 0x(0|[1-9A-F][0-9A-F]*)   yes
+| 0b(0|1[0-1]*)             yes
+floats?                     yes -> "."
+2e15                        yes -> Operator
+1_000                       no
+Complex                     yes -> Operator -> "5i"
+
+Addition:                   +
+Minus:                      -
+Multiplikation:             *
+Abrundende Division:        \
+Division:                   |
+Aufrundende Division:       /
+Modulo:                     mod
+Klammern:                   ( )
+Prefix Minus:               -
+Betrag:                     +
+Potenz:                     **
+Postfix Dekrement:          x-- Bindet am Stärksten
+Postfix Inkrement:          x++ Bindet am Stärksten
+
+Größer gleich:              <=
+Kleiner gleich:             >=
+Größer:                     <
+Kleiner:                    >
+Gleich:                     =
+Ungleich:                   !=
+Zuweisung:                  :=
+
+Müssen klein geschrieben werden:
+Und                         and
+Oder                        or
+Exclusive Oder              xor
+Exclusive und               xand
+Nicht                       not
+Falsch                      0
+Wahr                        sonst alles andere
+3 oder 0                    wir addieren
+3 and  0                    wir multiplizieren
+
+
+Überdenken/Probieren:       Bezeichner mit Emojis ohne führende Ziffer
+
+Kommentare:                 #
+Multiline:                  Delimiter vorne und hinten
