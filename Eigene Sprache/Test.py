@@ -1,6 +1,6 @@
 from Lexer import lexer
 
-lexer.input(r'5+6i')
+lexer.input('5+1+3 \n 6+2')
 
 for token in lexer:
     print(token)
