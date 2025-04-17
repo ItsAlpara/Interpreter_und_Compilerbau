@@ -1,24 +1,5 @@
 from ply.lex import lex
 
-
-
-#reserved = {
-#   'if' : 'IF',
-#   'then' : 'THEN',
-#   'else' : 'ELSE',
-#   'while' : 'WHILE',
-#   ...
-#}
-#
-#
-#tokens = ['LPAREN','RPAREN',...,'ID'] + list(reserved.values())
-#def t_ID(t):
-#    r'[a-zA-Z_][a-zA-Z_0-9]*'
-#    t.type = reserved.get(t.value,'ID')    # Check for reserved words
-#    return t
-
-
-
 reserved = {
 'and' : 'AND',
 'or'  : 'OR',
@@ -37,29 +18,25 @@ tokens = ['DECIMAL','HEX','BINARY','FLOAT','E'
          ,'EQUAL','NOT_EQUAL','ASSIGN',
           'FALSE','TRUE','COMMENT'] + list(reserved.values())
 
-literals = [ '+','-','*','/' ]
 
-
+##### Basics #####
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value,'ID')    # Check for reserved words
     return t
 
-t_DECIMAL = r'\d+'
-t_HEX = r'0x0|0x[1-9A-F][0-9A-F]*'
-t_BINARY = r'0b0|0b1[01]*'
+def t_COMMENT(t):
+    r'\#[^#]*\#'
+    pass
 
 def t_FLOAT(t):
     r'\d+\.\d+'
     t.value = float(t.value)
     return t
 
-t_POST_DEC = r'--'
-t_POST_INC = r'\+\+'
-
-
-t_COMPLEX = r'\d+i'
-#t_E = r'\d+e\d+' wie float?
+t_DECIMAL = r'\d+'
+t_HEX = r'0x0|0x[1-9A-F][0-9A-F]*'
+t_BINARY = r'0b0|0b1[01]*'
 
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -69,12 +46,9 @@ t_CEIL_DIVIDE = r'\/'
 t_FLOOR_DIVIDE = r'\\'
 t_DIVIDE = r'\|'
 
-
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_PREFIX_MINUS = r'-'
-t_ABSOLUTE = r'\+'
-t_POWER = r'\*\*'
 
 t_GREATER_THEN = r'>'
 t_LESS_THEN = r'<'
@@ -85,12 +59,16 @@ t_NOT_EQUAL = r'!='
 t_ASSIGN = r':='
 
 
+##### SPECIALS #####
+t_ABSOLUTE = r'\+'
+t_POWER = r'\*\*'
+t_COMPLEX = r'\d+i'
+t_E = r'\d+e\d+' #wie float?
 
-def t_COMMENT(t):
-    r'\#[^#]*\#'
-    pass
+t_POST_DEC = r'--'
+t_POST_INC = r'\+\+'
 
-
+##### Organisation #####
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
@@ -101,5 +79,7 @@ def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
+
+##### Build Lexer #####
 lexer = lex()
 
