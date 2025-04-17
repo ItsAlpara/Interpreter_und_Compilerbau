@@ -5,24 +5,24 @@ reserved = {
 'or'  : 'OR',
 'not' : 'NOT',
 'xor' : 'XOR',
-'xand' : 'XAND',
+'nand': 'NAND',
+'nor' : 'NOR',
 'mod' : 'MODULO',
 }
 
-tokens = ['DECIMAL','HEX','BINARY','FLOAT','E'
-         ,'COMPLEX','PLUS','MINUS','TIMES'
+tokens = ['IDENTIFIER','DECIMAL','HEX','BINARY','FLOAT','EXPONENT_FLOAT'
+         ,'IMAGINARY','PLUS','MINUS','TIMES'
          ,'CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE'
          ,'LPAREN','RPAREN','PREFIX_MINUS'
          ,'ABSOLUTE','POWER','POST_DEC','POST_INC'
          ,'GREATER_THEN','LESS_THEN','LESS_EQUAL','GREATER_EQUAL'
-         ,'EQUAL','NOT_EQUAL','ASSIGN',
-          'FALSE','TRUE','COMMENT'] + list(reserved.values())
+         ,'EQUAL','NOT_EQUAL','ASSIGN','COMMENT'] + list(reserved.values())
 
 
 ##### Basics #####
-def t_ID(t):
+def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value,'ID')    # Check for reserved words
+    t.type = reserved.get(t.value,'IDENTIFIER')    # Check for reserved words
     return t
 
 def t_COMMENT(t):
@@ -31,10 +31,9 @@ def t_COMMENT(t):
 
 def t_FLOAT(t):
     r'\d+\.\d+'
-    t.value = float(t.value)
     return t
 
-t_DECIMAL = r'\d+'
+t_DECIMAL = r'0|[1-9][0-9]*'
 t_HEX = r'0x0|0x[1-9A-F][0-9A-F]*'
 t_BINARY = r'0b0|0b1[01]*'
 
@@ -62,8 +61,12 @@ t_ASSIGN = r':='
 ##### SPECIALS #####
 t_ABSOLUTE = r'\+'
 t_POWER = r'\*\*'
-t_COMPLEX = r'\d+i'
-t_E = r'\d+e\d+' #wie float?
+t_IMAGINARY = r'imag'
+t_EXPONENT_FLOAT = r'E\d+' #wie float?
+
+def t_EXPONENT_FLOAT(t):
+    r'\d+.\d+E\d+'
+    return t
 
 t_POST_DEC = r'--'
 t_POST_INC = r'\+\+'
