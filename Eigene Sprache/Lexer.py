@@ -28,9 +28,6 @@ reserved = {
 'mod' : 'MODULO',
 }
 
-
-
-
 tokens = ['DECIMAL','HEX','BINARY','FLOAT','E'
          ,'COMPLEX','PLUS','MINUS','TIMES'
          ,'CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE'
