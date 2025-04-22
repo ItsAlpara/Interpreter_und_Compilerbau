@@ -5,17 +5,14 @@ reserved = {
 'or'  : 'OR',
 'not' : 'NOT',
 'xor' : 'XOR',
-'nand': 'NAND',
-'nor' : 'NOR',
 'mod' : 'MODULO',
 'imag': 'IMAGINARY',
 }
 
-tokens = ['IDENTIFIER','FLOAT','INTEGER'
-         ,'PLUS','MINUS','TIMES','CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE'
-         ,'LPAREN','RPAREN'
-         ,'GREATER_THAN','LESS_THAN','LESS_EQUAL','GREATER_EQUAL'
-         ,'EQUAL','NOT_EQUAL','ASSIGN','COMMENT'] + list(reserved.values())
+tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
+         ,'TIMES','CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE','LPAREN'
+         ,'RPAREN','GREATER_THAN','LESS_THAN','LESS_EQUAL'
+         ,'GREATER_EQUAL','EQUAL','NOT_EQUAL','ASSIGN'] + list(reserved.values())
 
 
 ##### Basics #####
@@ -23,15 +20,24 @@ def t_COMMENT(t):
     r'\#[^#]*\#'
     pass
 
+def t_BIN(t):
+    r'0b[01]+'
+    t.value = int(t.value, 2)
+    return t
+    
+def t_HEX(t):
+    r'0x([a-fA-F]|\d)+'
+    t.value = int(t.value,16)
+    return t
+
 def t_FLOAT(t):
-    r'[-+]?[0-9]+(\.([0-9]+)?([eE][-+]?[0-9]+)?|[eE][-+]?[0-9]+)'
+    r'[0-9]+(\.([0-9]+)?([eE][-+]?[0-9]+)?|[eE][-+]?[0-9]+)'
     t.value = float(t.value)
     return t
 
-def t_INTEGER(t):
-    r'(\d+)|(0x[0-9a-fA-F]+)|(0b[01]+)'
-    t.value = int(t.value[2:],base=2) if t.value.startswith('0b') else (int(t.value[2:],base=16) if t.value.startswith('0x') else int(t.value))
-    #t.value = eval(t.value)
+def t_DEC(t):
+    r'\d+'
+    t.value = int(t.value)
     return t
 
 def t_IDENTIFIER(t):
@@ -42,7 +48,6 @@ def t_IDENTIFIER(t):
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_TIMES = r'\*'
-
 t_CEIL_DIVIDE = r'\/'
 t_FLOOR_DIVIDE = r'\\'
 t_DIVIDE = r'\|'
@@ -56,6 +61,7 @@ t_LESS_EQUAL = r'<='
 t_GREATER_EQUAL = r'>='
 t_EQUAL = r'='
 t_NOT_EQUAL = r'!='
+
 t_ASSIGN = r':='
 
 ##### Organisation #####
@@ -73,10 +79,10 @@ def t_error(t):
 ##### Build Lexer #####
 lexer = lex()
 
-while True:
-    s = input('input > ')
-    lexer.input(s)
-    for tok in lexer:
-        if not tok:
-            break
-        print(tok)
+#while True:
+#    s = input('input > ')
+#    lexer.input(s)
+#    for tok in lexer:
+#        if not tok:
+#            break
+#        print(tok)
