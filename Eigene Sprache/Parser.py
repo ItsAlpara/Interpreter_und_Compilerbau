@@ -1,8 +1,13 @@
 from lexer1 import tokens
 from ply.yacc import yacc
 
+start = 'expression'
+
 precedence = (
+    ('nonassoc','EX_CAST'),
+    ('nonassoc','ASS_EX_CAST'),
     ('right','ASSIGN'),
+    ('nonassoc','BIN_EX_CAST'),
     ('left','OR'),
     ('left','XOR'),
     ('left','AND'),
@@ -11,20 +16,25 @@ precedence = (
     ('left','PLUS','MINUS'),
     ('left','TIMES','DIVIDE','CEIL_DIVIDE','FLOOR_DIVIDE','MODULO'),
     ('left','POWER'),
-    ('right','NOT','UPLUS','UMINUS'),
-   # ('right','PRE_INCREMENT','PRE_DECREMENT'),
-    ('left','IMAGINARY','POST_INCREMENT','POST_DECREMENT'),
-    ('nonassoc','IDENT_EXPR')
+    ('nonassoc','UN_EX_CAST'),
+    ('right','PRE_PLUS','PRE_MINUS'),
+    ('nonassoc','TWO_UN_EX_CAST'),
+#    ('right','PRE_INCR','PRE_DECR'),
+    ('nonassoc','POST_EX_CAST'),
+    ('left','IMAGINARY'),
+    ('nonassoc','TWO_POST_EX_CAST'),
+    ('left','POST_INCR','POST_DECR'),
 )
 
 def p_ex_integer(p):
-    '''expression : DEC
-                  | HEX
-                  | BIN'''
+    '''primary_expression : DEC
+                          | HEX
+                          | BIN
+    '''
     p[0] = ('int',p[1])
 
 def p_ex_float(p):
-    '''expression : FLOAT
+    '''primary_expression : FLOAT
     '''
     p[0] = ('float',p[1])
 
@@ -33,62 +43,77 @@ def p_identifier(p):
     p[0] = ('identifier',p[1])
 
 def p_ex_identifier(p):
-    '''expression : identifier %prec IDENT_EXPR'''
+    '''primary_expression : identifier'''
     p[0] = p[1]
 
 def p_ex_factor(p):
-    '''expression : LPAREN expression RPAREN'''
+    '''primary_expression : LPAREN expression RPAREN'''
     p[0] = p[2]
 
+def p_expression_upcasting(p):
+    '''expression : assign_expression %prec EX_CAST
+       assign_expression : binop_expression %prec ASS_EX_CAST
+       binop_expression : unary_expression %prec BIN_EX_CAST
+       unary_expression : two_unary_expression %prec UN_EX_CAST
+       two_unary_expression : postfix_expression %prec TWO_UN_EX_CAST
+       postfix_expression : two_postfix_expression %prec TWO_POST_EX_CAST
+       two_postfix_expression : primary_expression %prec POST_EX_CAST
+    '''
+    p[0] = p[1]
+
+def p_ex_assign(p):
+    '''assign_expression : identifier ASSIGN expression
+    '''
+    p[0] = ('assign',p[2],p[1],p[3])
+
 def p_ex_binop(p):
-    '''expression : expression PLUS expression
-                  | expression MINUS expression
-                  | expression TIMES expression
-                  | expression CEIL_DIVIDE expression
-                  | expression FLOOR_DIVIDE expression
-                  | expression DIVIDE expression
-                  | expression GREATER_THAN expression
-                  | expression LESS_THAN expression
-                  | expression GREATER_EQUAL expression
-                  | expression LESS_EQUAL expression
-                  | expression EQUAL expression
-                  | expression NOT_EQUAL expression
-                  | identifier ASSIGN expression
-                  | expression AND expression
-                  | expression OR expression
-                  | expression XOR expression
-                  | expression MODULO expression
+    '''binop_expression : binop_expression PLUS binop_expression
+                  | binop_expression MINUS binop_expression
+                  | binop_expression TIMES binop_expression
+                  | binop_expression CEIL_DIVIDE binop_expression
+                  | binop_expression FLOOR_DIVIDE binop_expression
+                  | binop_expression DIVIDE binop_expression
+                  | binop_expression GREATER_THAN binop_expression
+                  | binop_expression LESS_THAN binop_expression
+                  | binop_expression GREATER_EQUAL binop_expression
+                  | binop_expression LESS_EQUAL binop_expression
+                  | binop_expression EQUAL binop_expression
+                  | binop_expression NOT_EQUAL binop_expression
+                  | binop_expression AND binop_expression
+                  | binop_expression OR binop_expression
+                  | binop_expression XOR binop_expression
+                  | binop_expression MODULO binop_expression
     '''
     p[0] = ('binop',p[2],p[1],p[3])
 
 def p_ex_binop_twochar(p):
-    '''expression : expression TIMES TIMES expression %prec POWER
+    '''binop_expression : binop_expression TIMES TIMES binop_expression %prec POWER
     '''
     p[0] = ('binop_two',p[2]+p[3],p[1],p[4])
 
 def p_ex_post_unop(p):
-    '''expression : expression IMAGINARY
+    '''postfix_expression : postfix_expression IMAGINARY
     '''
     p[0] = ('post_unop',p[2],p[1])
 
 def p_ex_post_unop_twochar(p):
-    '''expression : expression PLUS PLUS %prec POST_INCREMENT
-                  | expression MINUS MINUS %prec POST_DECREMENT
+    '''two_postfix_expression : two_postfix_expression PLUS PLUS %prec POST_INCR
+                              | two_postfix_expression MINUS MINUS %prec POST_DECR
     '''
     p[0] = ('post_unop_two',p[2]+p[3],p[1])
 
 def p_ex_pre_unop(p):
-    '''expression : NOT expression
-                  | PLUS expression %prec UPLUS
-                  | MINUS expression %prec UMINUS
+    '''unary_expression : NOT unary_expression
+                        | PLUS unary_expression %prec PRE_PLUS
+                        | MINUS unary_expression %prec PRE_MINUS
     '''
     p[0] = ('pre_unop',p[1],p[2])
 
 #def p_ex_pre_unop_twochar(p):
-    #'''expression : PLUS PLUS expression %prec PRE_INCREMENT
-     #             | MINUS MINUS expression %prec PRE_DECREMENT
-    #'''
-   # p[0] = ('pre_unop',p[1]+p[2],p[3])
+#    '''two_unary_expression : PLUS PLUS two_unary_expression %prec PRE_INCR
+#                            | MINUS MINUS two_unary_expression %prec PRE_DECR
+#    '''
+#    p[0] = ('pre_unop',p[1]+p[2],p[3])
 
 def p_error(p):
     print("Syntax error in input!")
