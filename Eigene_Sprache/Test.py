@@ -1,6 +1,6 @@
 from Lexer import lexer
 from Parser import parser
-from Interpreter import eval
+from Interpreter import evalu
 
 while True:
     try:
@@ -43,7 +43,7 @@ match(zahl):
                 break
             if not s: continue
 
-            result = eval(parser.parse(s))
+            result = evalu(parser.parse(s))
             print(result)
 
 

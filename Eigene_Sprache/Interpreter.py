@@ -1,69 +1,64 @@
 import math
-from math import floor
 
-def eval(node):
-    if node[0] == 'int':
-        return int(node[1])
+def evalu(node):
+    match node:
+        case ['int', value]:
+            return int(value)
 
-    if node[0] == 'float':
-        return float(node[1])
+        case ['float', value]:
+            return float(value)
 
-    if node[0] == 'binop':
-        op = node[1]
-        left = eval(node[2])
-        right = eval(node[3])
-        if op == '+':
-            return left + right
-        elif op == '-':
-            return left - right
-        elif op == '*':
-            return left * right
-        elif op == '|':
-            return left / right
-        elif op == '/':
-            return math.ceil(left / right)
-        elif op == '\\':
-            return floor(left / right)
-        elif op == '<=':
-            return left <= right
-        elif op == '>=':
-            return left >= right
-        elif op == '<':
-            return left < right
-        elif op == '>':
-            return left > right
-        elif op == '=':
-            return left == right
-        elif op == '!=':
-            return left != right
-        elif op == 'and':
-            return left & right
-        elif op == 'or':
-            return left | right
-        elif op == 'xor':
-            return left ^ right
-        elif op == 'mod':
-            return left % right
+        case ['binop', op, left, right]:
+            match op:
+                case '+':
+                    return evalu(left) + evalu(right)
+                case '-':
+                    return evalu(left) - evalu(right)
+                case '*':
+                    return evalu(left) * evalu(right)
+                case '|':
+                    return evalu(left) / evalu(right)
+                case '/':
+                    return math.ceil(evalu(left) / evalu(right))
+                case '\\':
+                    return math.floor(evalu(left) / evalu(right))
+                case '<=':
+                    return evalu(left) <= evalu(right)
+                case '>=':
+                    return evalu(left) >= evalu(right)
+                case '<':
+                    return evalu(left) < evalu(right)
+                case '>':
+                    return evalu(left) > evalu(right)
+                case '=':
+                    return evalu(left) == evalu(right)
+                case '!=':
+                    return evalu(left) != evalu(right)
+                case 'and':
+                    return evalu(left) & evalu(right)
+                case 'or':
+                    return evalu(left) | evalu(right)
+                case 'xor':
+                    return evalu(left) ^ evalu(right)
+                case 'mod':
+                    return evalu(left) % evalu(right)
 
-    ##POWER##
-    if node[0] == 'binop_two':
-        return eval(node[2])**eval(node[3])
+        case ['binop_two', _, left, right]:
+            return evalu(left) ** evalu(right)
 
-    ##IMAGINARY##
-    if node[0] == 'post_unop':
-        return eval(node[2])
+        case ['post_unop', _, operand]:
+            return evalu(operand)
 
-    ###POST_INC_DEC###
-    if node[0] == 'post_unop_two':
-        if node[1] == '++':
-            return eval(node[2])+1
-        elif node[1] == '--':
-            return eval(node[2])-1
+        case ['post_unop_two', op, operand]:
+            match op:
+                case '++':
+                    return evalu(operand) + 1
+                case '--':
+                    return evalu(operand) - 1
 
-    ###PRE###
-    if node[0] == 'pre_unop':
-        if node[1] == '+':
-            return eval(node[2])
-        elif node[1] == '-':
-            return -eval(node[2])
-
+        case ['pre_unop', op, operand]:
+            match op:
+                case '+':
+                    return evalu(operand)
+                case '-':
+                    return -evalu(operand)
