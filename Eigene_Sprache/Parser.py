@@ -1,4 +1,4 @@
-from lexer1 import tokens
+from Lexer import tokens
 from ply.yacc import yacc
 
 precedence = (
@@ -95,14 +95,7 @@ def p_error(p):
 
 parser = yacc()
 
-while True:
-   try:
-       s = input('input > ')
-   except EOFError:
-       break
-   if not s: continue
-   result = parser.parse(s)
-   print(result)
+
 
 
    

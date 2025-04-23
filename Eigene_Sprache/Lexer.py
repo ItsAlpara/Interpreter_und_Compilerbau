@@ -79,10 +79,4 @@ def t_error(t):
 ##### Build Lexer #####
 lexer = lex()
 
-#while True:
-#    s = input('input > ')
-#    lexer.input(s)
-#    for tok in lexer:
-#        if not tok:
-#            break
-#        print(tok)
+

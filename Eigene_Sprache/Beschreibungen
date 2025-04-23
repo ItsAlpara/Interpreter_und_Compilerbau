@@ -1,3 +1,5 @@
+https://ply.readthedocs.io/en/latest/ply.html#lex-example
+
   0|[1-9][0-9]              yes
 | 0x(0|[1-9A-F][0-9A-F]*)   yes
 | 0b(0|1[0-1]*)             yes
