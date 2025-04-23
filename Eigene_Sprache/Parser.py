@@ -12,7 +12,6 @@ precedence = (
     ('left', 'TIMES', 'DIVIDE', 'CEIL_DIVIDE', 'FLOOR_DIVIDE', 'MODULO'),
     ('left', 'POWER'),
     ('right', 'NOT', 'UPLUS', 'UMINUS'),
-    # ('right','PRE_INCREMENT','PRE_DECREMENT'),
     ('left', 'IMAGINARY', 'POST_INCREMENT', 'POST_DECREMENT'),
     ('nonassoc', 'IDENT_EXPR')
 )
@@ -81,8 +80,8 @@ def p_ex_post_unop(p):
 
 
 def p_ex_post_unop_twochar(p):
-    '''expression : expression PLUS PLUS %prec POST_INCREMENT
-                  | expression MINUS MINUS %prec POST_DECREMENT
+    '''expression : expression PLUS PLUS  %prec POST_INCREMENT
+                  | expression MINUS MINUS  %prec POST_DECREMENT
     '''
     p[0] = ('post_unop_two', p[2] + p[3], p[1])
 
@@ -95,11 +94,6 @@ def p_ex_pre_unop(p):
     p[0] = ('pre_unop', p[1], p[2])
 
 
-# def p_ex_pre_unop_twochar(p):
-# '''expression : PLUS PLUS expression %prec PRE_INCREMENT
-#             | MINUS MINUS expression %prec PRE_DECREMENT
-# '''
-# p[0] = ('pre_unop',p[1]+p[2],p[3])
 
 def p_error(p):
     print("Syntax error in input!")

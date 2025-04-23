@@ -59,6 +59,6 @@ def evalu(node):
         case ['pre_unop', op, operand]:
             match op:
                 case '+':
-                    return evalu(operand)
+                    return abs(evalu(operand))
                 case '-':
-                    return -evalu(operand)
+                    return -abs(evalu(operand))
