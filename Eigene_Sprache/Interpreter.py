@@ -67,5 +67,3 @@ def eval(node):
         elif node[1] == '-':
             return -eval(node[2])
 
-    if node[0] == "Syntax error in input!":
-        print("Syntax error in input!")
