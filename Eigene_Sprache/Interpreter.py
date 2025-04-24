@@ -21,36 +21,58 @@ def evalu(node):
 
                 case '+':
                     return evalu(left) + evalu(right)
+
                 case '-':
                     return evalu(left) - evalu(right)
+
                 case '*':
                     return evalu(left) * evalu(right)
+
                 case '|':
                     return evalu(left) / evalu(right)
+
                 case '/':
                     return math.ceil(evalu(left) / evalu(right))
+
                 case '\\':
                     return math.floor(evalu(left) / evalu(right))
+
                 case '<=':
                     return evalu(left) <= evalu(right)
+
                 case '>=':
                     return evalu(left) >= evalu(right)
+
                 case '<':
                     return evalu(left) < evalu(right)
+
                 case '>':
                     return evalu(left) > evalu(right)
+
                 case '=':
                     return evalu(left) == evalu(right)
+
                 case '!=':
                     return evalu(left) != evalu(right)
+
                 case 'and':
-                    return evalu(left) & evalu(right)
+                    return min(evalu(left), evalu(right))
+
                 case 'or':
-                    return evalu(left) | evalu(right)
+                    return max(evalu(left), evalu(right))
+
                 case 'xor':
-                    return evalu(left) ^ evalu(right)
+                    el = evalu(left)
+                    er = evalu(right)
+                    if el != 0 and er != 0:
+                        return 0
+                    else:
+                        el ^ er
+
                 case 'mod':
                     return evalu(left) % evalu(right)
+
+###Hier noch Komplexe Zahlen einfügen und Emojis
 
         case ['binop_two', _, left, right]:
             return evalu(left) ** evalu(right)
@@ -61,9 +83,17 @@ def evalu(node):
         case ['post_unop_two', op, operand]:
             match op:
                 case '++':
-                    return evalu(operand) + 1
+                    if operand[0] == 'identifier':
+                        state[operand[1]] += 1
+                        return state[operand[1]]
+                    else:
+                        return evalu(operand) + 1
                 case '--':
-                    return evalu(operand) - 1
+                    if operand[0] == 'identifier':
+                        state[operand[1]] -= 1
+                        return state[operand[1]]
+                    else:
+                        return evalu(operand) - 1
 
         case ['pre_unop', op, operand]:
             match op:
@@ -71,3 +101,5 @@ def evalu(node):
                     return abs(evalu(operand))
                 case '-':
                     return -evalu(operand)
+                case 'not':
+                    return 0 if evalu(operand) != 0 else 1
