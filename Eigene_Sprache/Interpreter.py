@@ -1,7 +1,12 @@
 import math
 
+state = {"x": 1,"y":0,"z":0}
+
 def evalu(node):
     match node:
+        case ['identifier',value]:
+            return state[value]
+
         case ['int', value]:
             return int(value)
 
@@ -10,6 +15,10 @@ def evalu(node):
 
         case ['binop', op, left, right]:
             match op:
+                case ':=':
+                    state[left[1]] = evalu(right)
+                    return state[left[1]]
+
                 case '+':
                     return evalu(left) + evalu(right)
                 case '-':
@@ -61,4 +70,4 @@ def evalu(node):
                 case '+':
                     return abs(evalu(operand))
                 case '-':
-                    return -abs(evalu(operand))
+                    return -evalu(operand)

@@ -1,6 +1,7 @@
 from Lexer import lexer
 from Parser import parser
 from Interpreter import evalu
+from Interpreter import state
 
 
 def outPrint(zahl):
@@ -39,6 +40,9 @@ def outPrint(zahl):
                 try:
                     s = input('input > ')
                     if(s == 'exit'):
+                        break
+                    if(s == 'dict'):
+                        print(state)
                         break
                 except EOFError:
                     break
