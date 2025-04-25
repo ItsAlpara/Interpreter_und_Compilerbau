@@ -74,11 +74,12 @@ def evalu(node):
 
 ###Hier noch Komplexe Zahlen einfügen und Emojis
 
-        case ['binop_two', _, left, right]:
+        case ['binop_two', '**', left, right]:
             return evalu(left) ** evalu(right)
 
-        case ['post_unop', _, operand]:
-            return evalu(operand)
+        case ['post_unop', 'imag', operand]:
+            return complex(0,operand[1])
+
 
         case ['post_unop_two', op, operand]:
             match op:
