@@ -1,0 +1,64 @@
+Precedence
+
+assign 		rechts assoziativ
+or		links	"
+xor		links	"
+and		links	"
+EQUAL,NOT_EQUAL	links	"
+<=, =>, <, >	-	"	Paarweise auswerten, a < b < c wie Mathematik: b ist aus intervall a,c UND Ausdruck nur einmal ausgeführt
++, -		links	"
+*,\,|/,mod	links	"
+**,e		rechts	"
+
+++,--,imag	links	" 	(unaray Postfix)
+
++,-,not 	rechts	" 	(unary prefix)
+
+
+
+
+Variablen und Arithmetische Ausdrücke
+0|[1-9][0-9] 			yes
+| 0x(0|[1-9A-F][0-9A-F]*) 	yes
+| 0b(0|1[0-1]*) 		yes
+floats? 			yes -> "."
+2e15 				yes -> Operator 2e 15
+Complex 			yes -> Operator -> "5i"			Änderung: "Imag"
+
+Addition: 			+
+Minus: 				-
+Multiplikation: 		*
+Abrundende Division: 		\
+Division: 			|
+Aufrundende Division: 		/
+Modulo: 			mod
+Klammern: 			( )
+Prefix Minus: 			-
+Betrag: 			+
+Potenz: 			**
+Postfix 			Dekrement: x-- Bindet am Stärksten	Änderung: unary bindet nun Stäker
+Postfix 			Inkrement: x++ Bindet am Stärksten	Änderung: unary bindet nun Stäker
+
+Größer gleich: 			=
+Größer: 			<
+Kleiner: 			>
+Gleich: 			=
+Ungleich: 			!=
+Zuweisung: 			:=
+
+Boolsche Operatoren müssen klein geschrieben werden:			Änderung: "nur" 0|1
+Und 				and
+Oder 				or
+Exclusive Oder 			xor
+Exclusive und 			xand					Änderung: Fliegt raus
+Nicht 				not
+Falsch				0
+Wahr 				sonst alles andere
+3 oder 0 			wir addieren
+3 and 0 			wir multiplizieren
+
+Emojis									Hinzufügen: In Identifier: [a-zA-z\u007f - \nffff_]
+
+Überdenken/Probieren: 		Bezeichner mit Emojis ohne führende Ziffer
+
+Multiline: 			Delimiter vorne und hinten		Änderung: \#.*?\#
