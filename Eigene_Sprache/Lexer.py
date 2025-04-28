@@ -18,7 +18,7 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
 ##### Basics #####
 
 def t_COMMENT(t):
-   r'\#[^#]+\#*'
+   r'\#.*?\#'
    pass
 
 def t_BIN(t):
@@ -80,4 +80,6 @@ def t_error(t):
 ##### Build Lexer #####
 lexer = lex()
 
-
+lexer.input("#asdfasfd \n asfasdf#")
+for token in lexer:
+    print(token)
