@@ -16,9 +16,10 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
 
 
 ##### Basics #####
+
 def t_COMMENT(t):
-    r'\#[^#]*\#'
-    pass
+   r'\#[^#]+\#*'
+   pass
 
 def t_BIN(t):
     r'0b[01]+'
@@ -75,7 +76,6 @@ t_ignore = ' \t'
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
-
 
 ##### Build Lexer #####
 lexer = lex()
