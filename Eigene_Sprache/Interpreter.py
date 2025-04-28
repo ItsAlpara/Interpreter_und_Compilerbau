@@ -1,6 +1,6 @@
 import math
 
-state = {"x": 1,"y":0,"z":0}
+state = {"x": 0,"y":0,"z":0}
 
 def evalu(node):
     match node:
@@ -38,22 +38,22 @@ def evalu(node):
                     return math.floor(evalu(left) / evalu(right))
 
                 case '<=':
-                    return evalu(left) <= evalu(right)
+                    return int(evalu(left) <= evalu(right))
 
                 case '>=':
-                    return evalu(left) >= evalu(right)
+                    return int(evalu(left) >= evalu(right))
 
                 case '<':
-                    return evalu(left) < evalu(right)
+                    return int(evalu(left) < evalu(right))
 
                 case '>':
-                    return evalu(left) > evalu(right)
+                    return int(evalu(left) > evalu(right))
 
                 case '=':
-                    return evalu(left) == evalu(right)
+                    return int(evalu(left) == evalu(right))
 
                 case '!=':
-                    return evalu(left) != evalu(right)
+                    return int(evalu(left) != evalu(right))
 
                 case 'and':
                     return min(evalu(left), evalu(right))
@@ -72,7 +72,7 @@ def evalu(node):
                 case 'mod':
                     return evalu(left) % evalu(right)
 
-###Hier noch Komplexe Zahlen einfügen und Emojis
+
 
         case ['binop_two', '**', left, right]:
             return evalu(left) ** evalu(right)
