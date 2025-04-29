@@ -7,19 +7,16 @@ reserved = {
 'xor' : 'XOR',
 'mod' : 'MODULO',
 'imag': 'IMAGINARY',
+'E'   : 'EXPONENTIAL'
 }
 
 tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'TIMES','CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE','LPAREN'
          ,'RPAREN','GREATER_THAN','LESS_THAN','LESS_EQUAL'
-         ,'GREATER_EQUAL','EQUAL','NOT_EQUAL','ASSIGN'] + list(reserved.values())
+         ,'GREATER_EQUAL','EQUAL','NOT_EQUAL','ASSIGN' ] + list(reserved.values())
 
 
 ##### Basics #####
-
-def t_COMMENT(t):
-   r'\#.*?\#'
-   pass
 
 def t_BIN(t):
     r'0b[01]+'
@@ -32,7 +29,8 @@ def t_HEX(t):
     return t
 
 def t_FLOAT(t):
-    r'[0-9]+(\.([0-9]+)?([eE][-+]?[0-9]+)?|[eE][-+]?[0-9]+)'
+    #r'[0-9]+(\.([0-9]+)?([eE][-+]?[0-9]+)?|[eE][-+]?[0-9]+)'
+    r'[0-9]+\.[0-9]+'
     t.value = float(t.value)
     return t
 
@@ -42,9 +40,10 @@ def t_DEC(t):
     return t
 
 def t_IDENTIFIER(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    r'[a-zA-Z_\u007F-\uFFFF][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value,'IDENTIFIER')    # Check for reserved words
     return t
+
 
 t_PLUS = r'\+'
 t_MINUS = r'-'
@@ -67,6 +66,11 @@ t_NOT_EQUAL = r'!='
 t_ASSIGN = r':='
 
 ##### Organisation #####
+
+def t_COMMENT(t):
+   r'\#.*?\#'
+   pass
+
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
@@ -79,7 +83,3 @@ def t_error(t):
 
 ##### Build Lexer #####
 lexer = lex()
-
-lexer.input("#asdfasfd \n asfasdf#")
-for token in lexer:
-    print(token)

@@ -18,12 +18,12 @@ EQUAL,NOT_EQUAL	links	"
 
 
 Variablen und Arithmetische Ausdrücke
-0|[1-9][0-9] 			yes
+0|[1-9][0-9] 			    yes
 | 0x(0|[1-9A-F][0-9A-F]*) 	yes
-| 0b(0|1[0-1]*) 		yes
-floats? 			yes -> "."
-2e15 				yes -> Operator 2e 15
-Complex 			yes -> Operator -> "5i"			Änderung: "Imag"
+| 0b(0|1[0-1]*) 		    yes
+floats? 			        yes -> "."
+2e15 				        yes -> Operator 2e 15
+Complex 			        yes -> Operator -> "5i"			Änderung: "Imag"
 
 Addition: 			+
 Minus: 				-
@@ -49,8 +49,8 @@ Zuweisung: 			:=
 Boolsche Operatoren müssen klein geschrieben werden:			Änderung: "nur" 0|1
 Und 				and
 Oder 				or
-Exclusive Oder 			xor
-Exclusive und 			xand					Änderung: Fliegt raus
+Exclusive Oder 		xor
+Exclusive und 		xand					                    Änderung: Fliegt raus
 Nicht 				not
 Falsch				0
 Wahr 				sonst alles andere

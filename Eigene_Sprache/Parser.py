@@ -10,9 +10,9 @@ precedence = (
     ('nonassoc', 'GREATER_THAN', 'LESS_THAN', 'GREATER_EQUAL', 'LESS_EQUAL'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE', 'CEIL_DIVIDE', 'FLOOR_DIVIDE', 'MODULO'),
-    ('left', 'POWER'),
-    ('right', 'NOT', 'UPLUS', 'UMINUS'),
+    ('left', 'POWER','EXPONENTIAL'),
     ('left', 'IMAGINARY', 'POST_INCREMENT', 'POST_DECREMENT'),
+    ('right', 'NOT', 'UPLUS', 'UMINUS'),
     ('nonassoc', 'IDENT_EXPR')
 )
 
@@ -63,12 +63,14 @@ def p_ex_binop(p):
                   | expression OR expression
                   | expression XOR expression
                   | expression MODULO expression
+                  | expression EXPONENTIAL expression
     '''
     p[0] = ('binop', p[2], p[1], p[3])
 
 
 def p_ex_binop_twochar(p):
     '''expression : expression TIMES TIMES expression %prec POWER
+
     '''
     p[0] = ('binop_two', p[2] + p[3], p[1], p[4])
 

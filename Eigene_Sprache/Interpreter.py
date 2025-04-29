@@ -72,10 +72,14 @@ def evalu(node):
                 case 'mod':
                     return evalu(left) % evalu(right)
 
+                case 'E':
+                    return evalu(left) * (10**evalu(right))  # Angepasst E als OP
 
+        case ['binop_two', op, left, right]:
+            match(op):
+                case('**'):
+                    return evalu(left) ** evalu(right)
 
-        case ['binop_two', '**', left, right]:
-            return evalu(left) ** evalu(right)
 
         case ['post_unop', 'imag', operand]:
             return complex(0,operand[1])
