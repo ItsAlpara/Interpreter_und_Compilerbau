@@ -56,18 +56,24 @@ def evalu(node):
                     return int(evalu(left) != evalu(right))
 
                 case 'and':
-                    return min(evalu(left), evalu(right))
+                    if evalu(left) == 0 | evalu(right) == 0:
+                        return 0
+                    else:
+                        return 1
 
                 case 'or':
-                    return max(evalu(left), evalu(right))
+                    if evalu(left) != 0 & evalu(right) != 0:
+                        return 1
+                    else:
+                        return 0
 
                 case 'xor':
                     el = evalu(left)
                     er = evalu(right)
-                    if el != 0 and er != 0:
+                    if (el != 0 and er != 0) | (el == 0 and er == 0):
                         return 0
                     else:
-                        el ^ er
+                        return 1
 
                 case 'mod':
                     return evalu(left) % evalu(right)
