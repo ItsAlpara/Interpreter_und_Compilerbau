@@ -114,3 +114,14 @@ def evalu(node):
                     return -evalu(operand)
                 case 'not':
                     return 0 if evalu(operand) != 0 else 1
+
+######SEQ
+        case['sequence_body',value]:
+            return evalu(value)
+
+        case['ex_sem_seq',left,right]:
+            evalu(left)
+            return evalu(right)
+
+        case['ex_sem',value]:
+            return evalu(value)

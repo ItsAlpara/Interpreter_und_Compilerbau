@@ -13,7 +13,8 @@ reserved = {
 tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'TIMES','CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE','LPAREN'
          ,'RPAREN','GREATER_THAN','LESS_THAN','LESS_EQUAL'
-         ,'GREATER_EQUAL','EQUAL','NOT_EQUAL','ASSIGN' ] + list(reserved.values())
+         ,'GREATER_EQUAL','EQUAL','NOT_EQUAL','ASSIGN'
+         ,'LBRACE','RBRACE','SEMICOLON'] + list(reserved.values())
 
 
 ##### Basics #####
@@ -64,6 +65,13 @@ t_NOT_EQUAL = r'!='
 
 
 t_ASSIGN = r':='
+
+######SEQUENCE #######
+t_SEMICOLON = r';'
+t_LBRACE = r'{'
+t_RBRACE = r'}'
+
+
 
 ##### Organisation #####
 

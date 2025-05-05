@@ -95,7 +95,20 @@ def p_ex_pre_unop(p):
     '''
     p[0] = ('pre_unop', p[1], p[2])
 
+################################ SEQUENCES ####################################
+def p_sequence_body(p):
+    '''expression : LBRACE sequence RBRACE '''
+    p[0] = ('sequence_body', p[2])
 
+def p_sequence_exp_sem_cast(p):
+    '''sequence : expression
+                | expression SEMICOLON'''
+    p[0] = ('ex_sem',p[1])
+
+
+def p_sequence_ex_sem_seq(p):
+    '''sequence : expression SEMICOLON sequence'''
+    p[0] = ('ex_sem_seq',p[1],p[3])
 
 def p_error(p):
    print("Syntax error in input!")
