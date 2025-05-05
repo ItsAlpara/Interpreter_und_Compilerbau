@@ -20,7 +20,7 @@ precedence = (
 def p_ex_integer(p):
     '''expression : DEC
                   | HEX
-                  | BIN'''
+                  | BIN '''
     p[0] = ('int', p[1])
 
 
@@ -31,7 +31,8 @@ def p_ex_float(p):
 
 
 def p_identifier(p):
-    '''identifier : IDENTIFIER'''
+    '''identifier : IDENTIFIER
+    '''
     p[0] = ('identifier', p[1])
 
 
@@ -41,7 +42,8 @@ def p_ex_identifier(p):
 
 
 def p_ex_factor(p):
-    '''expression : LPAREN expression RPAREN'''
+    '''expression : LPAREN expression RPAREN
+    '''
     p[0] = p[2]
 
 
@@ -70,7 +72,6 @@ def p_ex_binop(p):
 
 def p_ex_binop_twochar(p):
     '''expression : expression TIMES TIMES expression %prec POWER
-
     '''
     p[0] = ('binop_two', p[2] + p[3], p[1], p[4])
 
@@ -97,12 +98,13 @@ def p_ex_pre_unop(p):
 
 ################################ SEQUENCES ####################################
 def p_sequence_body(p):
-    '''expression : LBRACE sequence RBRACE '''
+    '''expression : LBRACE sequence RBRACE'''
     p[0] = ('sequence_body', p[2])
 
 def p_sequence_exp_sem_cast(p):
     '''sequence : expression
-                | expression SEMICOLON'''
+                | expression SEMICOLON
+    '''
     p[0] = ('ex_sem',p[1])
 
 

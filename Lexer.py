@@ -1,5 +1,6 @@
 from ply.lex import lex
 
+
 reserved = {
 'and' : 'AND',
 'or'  : 'OR',
@@ -75,15 +76,14 @@ t_RBRACE = r'}'
 
 ##### Organisation #####
 
-def t_COMMENT(t):
-   r'\#.*?\#'
-   pass
+#t_ignoreCMT = r'\#[^#]*\#'
+t_ignore = ' \t'
 
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-t_ignore = ' \t'
+
 
 def t_error(t):
     print("Illegal character '%s'" % t.value[0])

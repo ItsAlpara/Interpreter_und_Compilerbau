@@ -57,8 +57,24 @@ Wahr 				sonst alles andere
 3 oder 0 			wir addieren
 3 and 0 			wir multiplizieren
 
-Emojis									Hinzufügen: In Identifier: [a-zA-z\u007f - \nffff_]
+Emojis									Hinzufügen: In Identifier: [a-zA-z\u007f - \nffff_] DONE
 
-Überdenken/Probieren: 		Bezeichner mit Emojis ohne führende Ziffer
+Überdenken/Probieren: 		Bezeichner mit Emojis ohne führende Ziffer DONE
 
-Multiline: 			Delimiter vorne und hinten		Änderung: \#.*?\#
+Multiline: 			Delimiter vorne und hinten		Änderung: \#.*?\# DONE
+
+DONE 05.05.2025
+
+<---------------------------------------------------------->
+Generator:
+
+
+
+
+
+
+
+
+
+
+
