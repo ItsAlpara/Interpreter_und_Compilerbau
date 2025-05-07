@@ -6,12 +6,12 @@ precedence = (
     ('left', 'OR'),
     ('left', 'XOR'),
     ('left', 'AND'),
-    ('left', 'EQUAL', 'NOT_EQUAL'),
-    ('nonassoc', 'GREATER_THAN', 'LESS_THAN', 'GREATER_EQUAL', 'LESS_EQUAL'),
+    ('nonassoc','COMP_EXPR'),
+    ('left', 'EQUAL', 'NOT_EQUAL', 'GREATER_THAN', 'LESS_THAN', 'GREATER_EQUAL', 'LESS_EQUAL'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE', 'CEIL_DIVIDE', 'FLOOR_DIVIDE', 'MODULO'),
     ('left', 'POWER','EXPONENTIAL'),
-    ('left', 'IMAGINARY', 'POST_INCREMENT', 'POST_DECREMENT'),
+    ('left', 'IMAGINARY'),
     ('right', 'NOT', 'UPLUS', 'UMINUS'),
     ('nonassoc', 'IDENT_EXPR')
 )
@@ -78,12 +78,6 @@ def p_ex_binop(p):
                   | expression CEIL_DIVIDE expression
                   | expression FLOOR_DIVIDE expression
                   | expression DIVIDE expression
-                  | expression GREATER_THAN expression
-                  | expression LESS_THAN expression
-                  | expression GREATER_EQUAL expression
-                  | expression LESS_EQUAL expression
-                  | expression EQUAL expression
-                  | expression NOT_EQUAL expression
                   | expression AND expression
                   | expression OR expression
                   | expression XOR expression
@@ -105,19 +99,37 @@ def p_ex_post_unop(p):
     p[0] = ('post_unop', p[2], p[1])
 
 
-def p_ex_post_unop_twochar(p):
-    '''expression : expression PLUS PLUS  %prec POST_INCREMENT
-                  | expression MINUS MINUS  %prec POST_DECREMENT
-    '''
-    p[0] = ('post_unop_two', p[2] + p[3], p[1])
-
-
 def p_ex_pre_unop(p):
     '''expression : NOT expression
                   | PLUS expression %prec UPLUS
                   | MINUS expression %prec UMINUS
     '''
     p[0] = ('pre_unop', p[1], p[2])
+
+def p_ex_compartor_seq(p):
+    '''expression : ex_comp %prec COMP_EXPR
+    '''
+    p[0]=('comp_seq',p[1])
+
+def p_ex_comp(p):
+    '''ex_comp : expression GREATER_THAN expression
+               | expression LESS_THAN expression
+               | expression GREATER_EQUAL expression
+               | expression LESS_EQUAL expression
+               | expression EQUAL expression
+               | expression NOT_EQUAL expression
+    '''
+    p[0]=(p[1],p[2],p[3])
+
+def p_ex_comp_seq(p):
+    '''ex_comp : ex_comp GREATER_THAN expression
+               | ex_comp LESS_THAN expression
+               | ex_comp GREATER_EQUAL expression
+               | ex_comp LESS_EQUAL expression
+               | ex_comp EQUAL expression
+               | ex_comp NOT_EQUAL expression
+    '''
+    p[0]=p[1]+(p[2],p[3])
 
 ################################ SEQUENCES ####################################
 def p_sequence_body(p):

@@ -59,6 +59,31 @@ def evalu(node):
             state[left[1]] = er
             return state[left[1]]
 
+        case ['comp_seq', seq]:
+            i = len(seq)
+            last_eval = evalu(seq[0])
+            value = True
+            temp_value = True
+            for x in range(0,i//2):
+                temp_eval = evalu(seq[2*(x+1)])
+                match seq[2*x+1]:
+                    case '<=':
+                        temp_value = last_eval <= temp_eval
+                    case '>=':
+                        temp_value = last_eval >= temp_eval 
+                    case '<':
+                        temp_value = last_eval < temp_eval 
+                    case '>':
+                        temp_value = last_eval > temp_eval 
+                    case '=':
+                        temp_value = last_eval == temp_eval 
+                    case '!=':
+                        temp_value = last_eval != temp_eval
+                value = value and temp_value
+                last_eval = temp_eval
+            return int(value)
+
+
         case ['binop', op, left, right]:
             el = evalu(left)
             er = evalu(right)
@@ -133,22 +158,6 @@ def evalu(node):
 
         case ['post_unop', 'imag', operand]:
             return complex(0,operand[1])
-
-
-        case ['post_unop_two', op, operand]:
-            match op:
-                case '++':
-                    if operand[0] == 'identifier':
-                        state[operand[1]] += 1
-                        return state[operand[1]]
-                    else:
-                        return evalu(operand) + 1
-                case '--':
-                    if operand[0] == 'identifier':
-                        state[operand[1]] -= 1
-                        return state[operand[1]]
-                    else:
-                        return evalu(operand) - 1
 
         case ['pre_unop', op, operand]:
             match op:
