@@ -69,6 +69,20 @@ DONE 05.05.2025
 Generator:
 Generatorfunktion implementieren
 
+Syntax: 2 Tokens
+Postfix Opertatoren fliegen raus
+x +:= 2
+x -:= 2
+x /:= 2
+x \:= 2
+x |:= 2
+x and:= 2
+x or:= 2
+x !=:= 2
+x =:= 2
+
+
+
 
 
 

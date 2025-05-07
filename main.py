@@ -1,3 +1,8 @@
+###Datum: 07.05.2025
+###Autor: Alpara
+###Version: 5.0f
+
+
 from Lexer import lexer
 from Parser import parser
 from Interpreter import evalu
