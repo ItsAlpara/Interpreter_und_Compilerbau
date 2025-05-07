@@ -13,78 +13,122 @@ def evalu(node):
         case ['float', value]:
             return float(value)
 
-        case ['binop', op, left, right]:
+        case ['assign', op, left, right]:
+            er = 0
             match op:
                 case ':=':
-                    state[left[1]] = evalu(right)
-                    return state[left[1]]
+                    er = evalu(right)
+                case ':=:=':
+                    er = evalu(right)
+                case '+:=':
+                    er = evalu(('binop','+',left,right))
+                case '-:=':
+                    er = evalu(('binop','-',left,right))
+                case '*:=':
+                    er = evalu(('binop','*',left,right))
+                case '|:=':
+                    er = evalu(('binop','|',left,right))
+                case '/:=':
+                    er = evalu(('binop','/',left,right))
+                case '\\:=':
+                    er = evalu(('binop','\\',left,right))
+                case 'mod:=':
+                    er = evalu(('binop','mod',left,right))
+                case '**:=':
+                    er = evalu(('binop_two','**',left,right))
+                case 'E:=':
+                    er = evalu(('binop','E',left,right))
+                case '<:=':
+                    er = evalu(('binop','<',left,right))
+                case '>:=':
+                    er = evalu(('binop','>',left,right))
+                case '<=:=':
+                    er = evalu(('binop','<=',left,right))
+                case '>=:=':
+                    er = evalu(('binop','>=',left,right))
+                case '=:=':
+                    er = evalu(('binop','=',left,right))
+                case '!=:=':
+                    er = evalu(('binop','!=',left,right))
+                case 'or:=':
+                    er = evalu(('binop','or',left,right))
+                case 'xor:=':
+                    er = evalu(('binop','xor',left,right))
+                case 'and:=':
+                    er = evalu(('binop','and',left,right))
+            state[left[1]] = er
+            return state[left[1]]
 
+        case ['binop', op, left, right]:
+            el = evalu(left)
+            er = evalu(right)
+            match op:
                 case '+':
-                    return evalu(left) + evalu(right)
+                    return el + er
 
                 case '-':
-                    return evalu(left) - evalu(right)
+                    return el - er
 
                 case '*':
-                    return evalu(left) * evalu(right)
+                    return el * er
 
                 case '|':
-                    return evalu(left) / evalu(right)
+                    return el / er
 
                 case '/':
-                    return math.ceil(evalu(left) / evalu(right))
+                    return math.ceil(el / er)
 
                 case '\\':
-                    return math.floor(evalu(left) / evalu(right))
+                    return math.floor(el / er)
 
                 case '<=':
-                    return int(evalu(left) <= evalu(right))
+                    return int(el <= er)
 
                 case '>=':
-                    return int(evalu(left) >= evalu(right))
+                    return int(el >= er)
 
                 case '<':
-                    return int(evalu(left) < evalu(right))
+                    return int(el < er)
 
                 case '>':
-                    return int(evalu(left) > evalu(right))
+                    return int(el > er)
 
                 case '=':
-                    return int(evalu(left) == evalu(right))
+                    return int(el == er)
 
                 case '!=':
-                    return int(evalu(left) != evalu(right))
+                    return int(el != er)
 
                 case 'and':
-                    if evalu(left) == 0 | evalu(right) == 0:
+                    if el == 0 or er == 0:
                         return 0
                     else:
                         return 1
 
                 case 'or':
-                    if evalu(left) != 0 & evalu(right) != 0:
+                    if el != 0 and er != 0:
                         return 1
                     else:
                         return 0
 
                 case 'xor':
-                    el = evalu(left)
-                    er = evalu(right)
-                    if (el != 0 and er != 0) | (el == 0 and er == 0):
+                    if (el != 0 and er != 0) or (el == 0 and er == 0):
                         return 0
                     else:
                         return 1
 
                 case 'mod':
-                    return evalu(left) % evalu(right)
+                    return el % er
 
                 case 'E':
-                    return evalu(left) * (10**evalu(right))  # Angepasst E als OP
+                    return el * (10**er)  # Angepasst E als OP
 
         case ['binop_two', op, left, right]:
+            el = evalu(left)
+            er = evalu(right)
             match(op):
                 case('**'):
-                    return evalu(left) ** evalu(right)
+                    return el ** er
 
 
         case ['post_unop', 'imag', operand]:

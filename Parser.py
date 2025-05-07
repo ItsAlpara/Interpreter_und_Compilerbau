@@ -46,6 +46,30 @@ def p_ex_factor(p):
     '''
     p[0] = p[2]
 
+def p_ex_assign(p):
+    '''expression : identifier ASSIGN expression
+                  | identifier PLUS_ASSIGN expression %prec ASSIGN
+                  | identifier MINUS_ASSIGN expression %prec ASSIGN
+                  | identifier TIMES_ASSIGN expression %prec ASSIGN
+                  | identifier CEIL_DIVIDE_ASSIGN expression %prec ASSIGN
+                  | identifier FLOOR_DIVIDE_ASSIGN expression %prec ASSIGN
+                  | identifier DIVIDE_ASSIGN expression %prec ASSIGN
+                  | identifier MOD_ASSIGN expression %prec ASSIGN
+                  | identifier POWER_ASSIGN expression %prec ASSIGN
+                  | identifier E_ASSIGN expression %prec ASSIGN
+                  | identifier ASSIGN_ASSIGN expression %prec ASSIGN
+                  | identifier GREATER_THAN_ASSIGN expression %prec ASSIGN
+                  | identifier LESS_THAN_ASSIGN expression %prec ASSIGN
+                  | identifier LESS_EQUAL_ASSIGN expression %prec ASSIGN
+                  | identifier GREATER_EQUAL_ASSIGN expression %prec ASSIGN
+                  | identifier EQUAL_ASSIGN expression %prec ASSIGN
+                  | identifier NOT_EQUAL_ASSIGN expression %prec ASSIGN
+                  | identifier OR_ASSIGN expression %prec ASSIGN
+                  | identifier XOR_ASSIGN expression %prec ASSIGN
+                  | identifier AND_ASSIGN expression %prec ASSIGN
+    '''
+    p[0] = ('assign',p[2],p[1],p[3])
+
 
 def p_ex_binop(p):
     '''expression : expression PLUS expression
@@ -60,7 +84,6 @@ def p_ex_binop(p):
                   | expression LESS_EQUAL expression
                   | expression EQUAL expression
                   | expression NOT_EQUAL expression
-                  | identifier ASSIGN expression
                   | expression AND expression
                   | expression OR expression
                   | expression XOR expression

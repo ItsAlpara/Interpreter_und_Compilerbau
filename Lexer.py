@@ -15,6 +15,11 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'TIMES','CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE','LPAREN'
          ,'RPAREN','GREATER_THAN','LESS_THAN','LESS_EQUAL'
          ,'GREATER_EQUAL','EQUAL','NOT_EQUAL','ASSIGN'
+         ,'PLUS_ASSIGN','MINUS_ASSIGN','TIMES_ASSIGN','CEIL_DIVIDE_ASSIGN'
+         ,'FLOOR_DIVIDE_ASSIGN','DIVIDE_ASSIGN','MOD_ASSIGN','POWER_ASSIGN'
+         ,'E_ASSIGN','ASSIGN_ASSIGN','GREATER_THAN_ASSIGN','LESS_THAN_ASSIGN'
+         ,'LESS_EQUAL_ASSIGN','GREATER_EQUAL_ASSIGN','EQUAL_ASSIGN'
+         ,'NOT_EQUAL_ASSIGN','OR_ASSIGN','XOR_ASSIGN','AND_ASSIGN'
          ,'LBRACE','RBRACE','SEMICOLON'] + list(reserved.values())
 
 
@@ -41,6 +46,26 @@ def t_DEC(t):
     t.value = int(t.value)
     return t
 
+def t_MOD_ASSIGN(t):
+    r'mod:='
+    return t
+
+def t_E_ASSIGN(t):
+    r'E:='
+    return t
+
+def t_OR_ASSIGN(t):
+    r'or:='
+    return t
+
+def t_XOR_ASSIGN(t):
+    r'xor:='
+    return t
+
+def t_AND_ASSIGN(t):
+    r'and:='
+    return t
+
 def t_IDENTIFIER(t):
     r'[a-zA-Z_\u007F-\uFFFF][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value,'IDENTIFIER')    # Check for reserved words
@@ -64,14 +89,30 @@ t_GREATER_EQUAL = r'>='
 t_EQUAL = r'='
 t_NOT_EQUAL = r'!='
 
-
 t_ASSIGN = r':='
+
+t_PLUS_ASSIGN = r'\+:='
+t_MINUS_ASSIGN = r'-:='
+t_TIMES_ASSIGN = r'\*:='
+t_CEIL_DIVIDE_ASSIGN = r'\/:='
+t_FLOOR_DIVIDE_ASSIGN = r'\\:='
+t_DIVIDE_ASSIGN = r'\|:='
+t_POWER_ASSIGN = r'\*\*:='
+
+t_ASSIGN_ASSIGN = r':=:='
+
+t_GREATER_THAN_ASSIGN = r'>:='
+t_LESS_THAN_ASSIGN = r'<:='
+t_LESS_EQUAL_ASSIGN = r'<=:='
+t_GREATER_EQUAL_ASSIGN = r'>=:='
+t_EQUAL_ASSIGN = r'=:='
+t_NOT_EQUAL_ASSIGN = r'!=:='
+
 
 ######SEQUENCE #######
 t_SEMICOLON = r';'
 t_LBRACE = r'{'
 t_RBRACE = r'}'
-
 
 
 ##### Organisation #####
