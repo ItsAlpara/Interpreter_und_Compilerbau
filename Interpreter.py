@@ -1,8 +1,6 @@
 import math
 
-state = {"x": 0,"y":0,"z":0}
-
-def evalu(node):
+def evalu(node, state):
     match node:
         case ['identifier',value]:
             return state[value]
@@ -17,55 +15,55 @@ def evalu(node):
             er = 0
             match op:
                 case ':=':
-                    er = evalu(right)
+                    er = evalu(right, state)
                 case ':=:=':
-                    er = evalu(right)
+                    er = evalu(right, state)
                 case '+:=':
-                    er = evalu(('binop','+',left,right))
+                    er = evalu(('binop','+',left,right), state)
                 case '-:=':
-                    er = evalu(('binop','-',left,right))
+                    er = evalu(('binop','-',left,right), state)
                 case '*:=':
-                    er = evalu(('binop','*',left,right))
+                    er = evalu(('binop','*',left,right), state)
                 case '|:=':
-                    er = evalu(('binop','|',left,right))
+                    er = evalu(('binop','|',left,right), state)
                 case '/:=':
-                    er = evalu(('binop','/',left,right))
+                    er = evalu(('binop','/',left,right), state)
                 case '\\:=':
-                    er = evalu(('binop','\\',left,right))
+                    er = evalu(('binop','\\',left,right), state)
                 case 'mod:=':
-                    er = evalu(('binop','mod',left,right))
+                    er = evalu(('binop','mod',left,right), state)
                 case '**:=':
-                    er = evalu(('binop_two','**',left,right))
+                    er = evalu(('binop_two','**',left,right), state)
                 case 'E:=':
-                    er = evalu(('binop','E',left,right))
+                    er = evalu(('binop','E',left,right), state)
                 case '<:=':
-                    er = evalu(('binop','<',left,right))
+                    er = evalu(('binop','<',left,right), state)
                 case '>:=':
-                    er = evalu(('binop','>',left,right))
+                    er = evalu(('binop','>',left,right), state)
                 case '<=:=':
-                    er = evalu(('binop','<=',left,right))
+                    er = evalu(('binop','<=',left,right), state)
                 case '>=:=':
-                    er = evalu(('binop','>=',left,right))
+                    er = evalu(('binop','>=',left,right), state)
                 case '=:=':
-                    er = evalu(('binop','=',left,right))
+                    er = evalu(('binop','=',left,right), state)
                 case '!=:=':
-                    er = evalu(('binop','!=',left,right))
+                    er = evalu(('binop','!=',left,right), state)
                 case 'or:=':
-                    er = evalu(('binop','or',left,right))
+                    er = evalu(('binop','or',left,right), state)
                 case 'xor:=':
-                    er = evalu(('binop','xor',left,right))
+                    er = evalu(('binop','xor',left,right), state)
                 case 'and:=':
-                    er = evalu(('binop','and',left,right))
+                    er = evalu(('binop','and',left,right), state)
             state[left[1]] = er
             return state[left[1]]
 
         case ['comp_seq', seq]:
             i = len(seq)
-            last_eval = evalu(seq[0])
+            last_eval = evalu(seq[0], state)
             value = True
             temp_value = True
             for x in range(0,i//2):
-                temp_eval = evalu(seq[2*(x+1)])
+                temp_eval = evalu(seq[2*(x+1)], state)
                 match seq[2*x+1]:
                     case '<=':
                         temp_value = last_eval <= temp_eval
@@ -85,8 +83,8 @@ def evalu(node):
 
 
         case ['binop', op, left, right]:
-            el = evalu(left)
-            er = evalu(right)
+            el = evalu(left, state)
+            er = evalu(right, state)
             match op:
                 case '+':
                     return el + er
@@ -149,8 +147,8 @@ def evalu(node):
                     return el * (10**er)  # Angepasst E als OP
 
         case ['binop_two', op, left, right]:
-            el = evalu(left)
-            er = evalu(right)
+            el = evalu(left, state)
+            er = evalu(right, state)
             match(op):
                 case('**'):
                     return el ** er
@@ -162,19 +160,19 @@ def evalu(node):
         case ['pre_unop', op, operand]:
             match op:
                 case '+':
-                    return abs(evalu(operand))
+                    return abs(evalu(operand, state))
                 case '-':
-                    return -evalu(operand)
+                    return -evalu(operand, state)
                 case 'not':
-                    return 0 if evalu(operand) != 0 else 1
+                    return 0 if evalu(operand, state) != 0 else 1
 
 ######SEQ
         case['sequence_body',value]:
-            return evalu(value)
+            return evalu(value, state)
 
         case['ex_sem_seq',left,right]:
-            evalu(left)
-            return evalu(right)
+            evalu(left, state)
+            return evalu(right, state)
 
         case['ex_sem',value]:
-            return evalu(value)
+            return evalu(value, state)
