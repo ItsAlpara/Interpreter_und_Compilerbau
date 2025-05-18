@@ -147,9 +147,26 @@ def p_sequence_ex_sem_seq(p):
     '''sequence : expression SEMICOLON sequence'''
     p[0] = ('ex_sem_seq',p[1],p[3])
 
+############################### CONTROL STRUCTURES #############################
+def p_ex_if(p):
+    '''expression : IF expression THEN COMMA expression POINT
+    '''
+    p[0] = ('if',p[2],p[5])
+
+def p_ex_if_else(p):
+    '''expression : IF expression THEN COMMA expression COMMA ELSE expression POINT
+    '''
+    p[0] = ('if_else',p[2],p[5],p[8])
+
+def p_ex_while(p):
+    '''expression : WHILE expression THEN COMMA expression POINT
+    '''
+    p[0] = ('while',p[2],p[5])
+
+############################### ERROR HANDELING ################################
+    
 def p_error(p):
    print("Syntax error in input!")
-
 
 parser = yacc()
 

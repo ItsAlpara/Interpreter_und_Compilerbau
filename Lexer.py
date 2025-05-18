@@ -8,8 +8,15 @@ reserved = {
 'xor' : 'XOR',
 'mod' : 'MODULO',
 'imag': 'IMAGINARY',
-'E'   : 'EXPONENTIAL'
+'E'   : 'EXPONENTIAL',
+'wenn': 'IF',
+'gilt': 'THEN',
+'sonst': 'ELSE',
+'solange': 'WHILE',
+'wiederhole' : 'LOOP',
+
 }
+
 
 tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'TIMES','CEIL_DIVIDE','FLOOR_DIVIDE','DIVIDE','LPAREN'
@@ -20,7 +27,7 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'E_ASSIGN','ASSIGN_ASSIGN','GREATER_THAN_ASSIGN','LESS_THAN_ASSIGN'
          ,'LESS_EQUAL_ASSIGN','GREATER_EQUAL_ASSIGN','EQUAL_ASSIGN'
          ,'NOT_EQUAL_ASSIGN','OR_ASSIGN','XOR_ASSIGN','AND_ASSIGN'
-         ,'LBRACE','RBRACE','SEMICOLON'] + list(reserved.values())
+         ,'LBRACE','RBRACE','SEMICOLON','POINT','COMMA'] + list(reserved.values())
 
 
 ##### Basics #####
@@ -108,12 +115,14 @@ t_GREATER_EQUAL_ASSIGN = r'>=:='
 t_EQUAL_ASSIGN = r'=:='
 t_NOT_EQUAL_ASSIGN = r'!=:='
 
+t_POINT = r'\.'
+t_COMMA = r','
 
-######SEQUENCE #######
+
+######### SEQUENCE ##############
 t_SEMICOLON = r';'
 t_LBRACE = r'{'
 t_RBRACE = r'}'
-
 
 ##### Organisation #####
 

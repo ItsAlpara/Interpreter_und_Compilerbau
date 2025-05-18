@@ -176,3 +176,17 @@ def evalu(node, state):
 
         case['ex_sem',value]:
             return evalu(value, state)
+
+##############
+
+        case['if',cond,expr]:
+            return evalu(expr, state) if evalu(cond, state) else None
+            
+        case['if_else',cond,expr1,expr2]:
+            return evalu(expr1, state) if evalu(cond, state) else evalu(expr2, state)
+
+        case['while',cond,expr]:
+            ret = None
+            while(evalu(cond, state)):
+                ret = evalu(expr, state)
+            return ret
