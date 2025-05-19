@@ -163,6 +163,17 @@ def p_ex_while(p):
     '''
     p[0] = ('while',p[2],p[5])
 
+def p_brackets(p):
+    '''brack : LBRACKET
+             | RBRACKET
+    '''
+    p[0] = ('brack',p[1])
+
+def p_ex_loop(p):
+    '''expression : LOOP identifier IN brack expression COMMA expression brack WDH expression
+    '''
+    p[0]= ('loop',p[2],p[4],p[5],p[7],p[8],p[10])
+
 ############################### ERROR HANDELING ################################
     
 def p_error(p):

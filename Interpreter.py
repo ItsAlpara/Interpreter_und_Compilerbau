@@ -190,3 +190,16 @@ def evalu(node, state):
             while(evalu(cond, state)):
                 ret = evalu(expr, state)
             return ret
+
+        case['loop',ident,brack1,lexpr,rexpr,brack2,expr]:
+            lexpr_eval = evalu(lexpr, state)
+            rexpr_eval = evalu(rexpr, state)
+            ret = None
+            low = lexpr_eval if brack1[1] == '[' else lexpr_eval + 1
+            high = rexpr_eval if brack1[1] == '[' else rexpr_eval + 1
+            i = low
+            for _ in range(low, high):
+                state[ident[1]] = i
+                i = i + 1
+                ret = evalu(expr, state)
+            return ret
