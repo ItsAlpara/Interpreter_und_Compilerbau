@@ -82,6 +82,50 @@ x !=:= 2
 x =:= 2
 
 
+<---------------------------------------------------------->
+19.05.2025
+U: Var -> N    S: N -> N
+E: Var -> Val
+E(x) = 3, E(z) = 1 ...
+|
+v
+E'(z) = 1 ..., E'(x) = neu
+
+E' = E.copy();
+Aufruf = E'[x] = a
+
+Lexer: 'Lambda hinzufügen'
+
+Parser: 2 Regeln: lambda & call
+
+Interpreter: Lambda erzeugt ein neues enviorment, hier wird das lexikal scoping festgelegt
+
+env = Envoironment()
+from envoironment import Environment
+
+U: env
+x: identifier
+expr: Variablen
+S: Speicher (Store)
+                             |Closure |
+Sem(LAMBDA(x): expr,U;S) =  ((U,x,expr),S)
+Val wird entsprechend erweitert.
+
+Sem(expr1(expr2),U;S) = Sem(exprf,U',S''')
+   ((Uf,xf,exprf),S') = Sem(expr1,U;S)
+              (a,S'') = Sem(expr2,U;S')
+                   U' = Uf[xf: nxt(S''')] # put    nxt = max(S''^-1)+1 #nächste Freie Speicherstelle
+                 S''' = S''[U'(xf): a] #In Speicherstelle den Wert eintragen und return
+
+Überlegungen:
+f = lambda(x,y,z): x+y
+g = f(2,3)
+g(3)
+
+f=lambda(x):lambda(y):x+y
+f(2)(3)
+
+
 
 
 

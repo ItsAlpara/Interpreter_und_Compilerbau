@@ -142,10 +142,27 @@ def p_sequence_exp_sem_cast(p):
     '''
     p[0] = ('ex_sem',p[1])
 
-
 def p_sequence_ex_sem_seq(p):
     '''sequence : expression SEMICOLON sequence'''
     p[0] = ('ex_sem_seq',p[1],p[3])
+
+############################### LAMBDA #########################################
+
+def p_lambda_ex(p):
+    ''' expression : LAMBDA LPAREN params RPAREN ARROW expression POINT
+    '''
+    p[0] = ('ex_lambda',p[3],p[6])
+
+def p_lambda_param(p):
+    ''' params : identifier
+    '''
+    p[0] = ('params',p[1])
+
+def p_lambda_paramlist(p):
+    ''' params : params COMMA identifier
+    '''
+    p[0] = p[1] + (p[3],)
+
 
 ############################### CONTROL STRUCTURES #############################
 def p_ex_if(p):
