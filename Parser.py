@@ -173,7 +173,30 @@ def p_lambda_paramlist_fin2(p):
     '''
     p[0]=('paramlist_point',p[1],p[3])
 
+#################################  CALL ####################################################
+def p_ex_call(p):
+    ''' expression : expression LPAREN callparamlist RPAREN
+    '''
+    p[0] = ('ex_call',p[1],p[3])
 
+def p_call_param_assignment(p):
+    ''' callparam : identifier COLON expression
+    '''
+    p[0] = ('callparam_assignment',p[1],p[3])
+
+def p_call_param_expr(p):
+    ''' callparam : expression'''
+    p[0] = ('callparam_expr',p[1])
+
+def p_call_param_list_1(p):
+    ''' callparamlist :  callparam
+    '''
+    p[0]=('callparam_list',p[1])
+
+def p_call_param_list_2(p):
+    ''' callparamlist :  callparamlist COMMA callparam
+    '''
+    p[0]= p[1] + (p[3],)
 
 ############################### CONTROL STRUCTURES #############################
 def p_ex_if(p):
@@ -201,6 +224,8 @@ def p_ex_loop(p):
     '''expression : LOOP identifier IN brack expression COMMA expression brack WDH expression POINT
     '''
     p[0]= ('loop',p[2],p[4],p[5],p[7],p[8],p[10])
+
+
 
 
 ############################### ERROR HANDELING ################################

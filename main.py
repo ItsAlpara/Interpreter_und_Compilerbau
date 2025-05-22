@@ -6,8 +6,9 @@
 from Lexer import lexer
 from Parser import parser
 from Interpreter import evalu
+from Entry import *
 
-state = {"x": 0,"y":0,"z":0}
+state = SymbolTable().push(['x','y','z'])
 
 def outPrint(zahl):
     match(zahl):

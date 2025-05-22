@@ -30,7 +30,7 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'LESS_EQUAL_ASSIGN','GREATER_EQUAL_ASSIGN','EQUAL_ASSIGN'
          ,'NOT_EQUAL_ASSIGN','OR_ASSIGN','XOR_ASSIGN','AND_ASSIGN'
          ,'LBRACE','RBRACE','SEMICOLON','POINT','COMMA','LBRACKET','RBRACKET'
-         ,'ARROW'] + list(reserved.values())
+         ,'ARROW','COLON'] + list(reserved.values())
 
 
 ##### Basics #####
@@ -131,7 +131,7 @@ t_RBRACE = r'}'
 
 ######### LAMBDA ################
 t_ARROW = r'->'
-
+t_COLON = r':'
 ##### Organisation #####
 
 #t_ignoreCMT = r'\#[^#]*\#'
