@@ -149,7 +149,7 @@ def p_sequence_ex_sem_seq(p):
 ############################### LAMBDA #########################################
 
 def p_lambda_ex(p):
-    ''' expression : LAMBDA LPAREN params RPAREN ARROW expression POINT
+    ''' expression : LAMBDA LPAREN paramlist RPAREN ARROW expression POINT
     '''
     p[0] = ('ex_lambda',p[3],p[6])
 
@@ -162,6 +162,17 @@ def p_lambda_paramlist(p):
     ''' params : params COMMA identifier
     '''
     p[0] = p[1] + (p[3],)
+
+def p_lambda_paramlist_fin1(p):
+    ''' paramlist : params
+    '''
+    p[0]=('paramlist',p[1])
+
+def p_lambda_paramlist_fin2(p):
+    ''' paramlist : params COMMA identifier POINT POINT POINT
+    '''
+    p[0]=('paramlist_point',p[1],p[3])
+
 
 
 ############################### CONTROL STRUCTURES #############################
@@ -192,12 +203,6 @@ def p_ex_loop(p):
     p[0]= ('loop',p[2],p[4],p[5],p[7],p[8],p[10])
 
 
-################################################################################
-
-#def p_def_lambda(p):
- #   '''expression : LAMBDA LPAREN 
-  #  '''
-    
 ############################### ERROR HANDELING ################################
     
 def p_error(p):
