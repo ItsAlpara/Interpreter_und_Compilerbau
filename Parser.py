@@ -170,10 +170,17 @@ def p_brackets(p):
     p[0] = ('brack',p[1])
 
 def p_ex_loop(p):
-    '''expression : LOOP identifier IN brack expression COMMA expression brack WDH expression
+    '''expression : LOOP identifier IN brack expression COMMA expression brack WDH expression POINT
     '''
     p[0]= ('loop',p[2],p[4],p[5],p[7],p[8],p[10])
 
+
+################################################################################
+
+#def p_def_lambda(p):
+ #   '''expression : LAMBDA LPAREN 
+  #  '''
+    
 ############################### ERROR HANDELING ################################
     
 def p_error(p):

@@ -16,6 +16,7 @@ reserved = {
 'wiederhole' : 'WDH',
 'fuer':'LOOP',
 'in':'IN',
+'lambda':'LAMBDA'
 }
 
 
@@ -28,7 +29,7 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'E_ASSIGN','ASSIGN_ASSIGN','GREATER_THAN_ASSIGN','LESS_THAN_ASSIGN'
          ,'LESS_EQUAL_ASSIGN','GREATER_EQUAL_ASSIGN','EQUAL_ASSIGN'
          ,'NOT_EQUAL_ASSIGN','OR_ASSIGN','XOR_ASSIGN','AND_ASSIGN'
-         ,'LBRACE','RBRACE','SEMICOLON','POINT','COMMA','LBRACKET','RBRACKET'] + list(reserved.values())
+         ,'LBRACE','RBRACE','SEMICOLON','POINT','COMMA','LBRACKET','RBRACKET','ARROW'] + list(reserved.values())
 
 
 ##### Basics #####
@@ -120,6 +121,8 @@ t_POINT = r'\.'
 t_COMMA = r','
 t_LBRACKET = '\['
 t_RBRACKET = '\]'
+
+t_ARROW = '->'
 
 
 ######### SEQUENCE ##############
