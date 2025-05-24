@@ -11,9 +11,9 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE', 'CEIL_DIVIDE', 'FLOOR_DIVIDE', 'MODULO'),
     ('left', 'POWER','EXPONENTIAL'),
-    ('left', 'IMAGINARY'),
-    ('right', 'NOT', 'UPLUS', 'UMINUS'),
-    ('nonassoc', 'IDENT_EXPR')
+    ('left', 'IMAGINARY','CALL'),
+    ('right', 'NOT', 'UPLUS', 'UMINUS','LENGTH','ECHO'),
+    ('nonassoc', 'IDENT_EXPR'),
 )
 
 
@@ -47,7 +47,7 @@ def p_ex_factor(p):
     p[0] = p[2]
 
 def p_ex_assign(p):
-    '''expression : identifier ASSIGN expression
+    '''expression : identifier ASSIGN expression %prec ASSIGN
                   | identifier PLUS_ASSIGN expression %prec ASSIGN
                   | identifier MINUS_ASSIGN expression %prec ASSIGN
                   | identifier TIMES_ASSIGN expression %prec ASSIGN
@@ -156,7 +156,7 @@ def p_lambda_ex(p):
 def p_lambda_param(p):
     ''' params : identifier
     '''
-    p[0] = ('params',p[1])
+    p[0] = (p[1],)
 
 def p_lambda_paramlist(p):
     ''' params : params COMMA identifier
@@ -173,9 +173,14 @@ def p_lambda_paramlist_fin2(p):
     '''
     p[0]=('paramlist_point',p[1],p[3])
 
+def p_lambda_paramlist_fin3(p):
+    ''' paramlist : identifier POINT POINT POINT
+    '''
+    p[0]=('paramlist_point',(),p[1])
+
 #################################  CALL ####################################################
 def p_ex_call(p):
-    ''' expression : expression LPAREN callparamlist RPAREN
+    ''' expression : expression LPAREN callparamlist RPAREN %prec CALL
     '''
     p[0] = ('ex_call',p[1],p[3])
 
@@ -191,7 +196,7 @@ def p_call_param_expr(p):
 def p_call_param_list_1(p):
     ''' callparamlist :  callparam
     '''
-    p[0]=('callparam_list',p[1])
+    p[0]=(p[1],)
 
 def p_call_param_list_2(p):
     ''' callparamlist :  callparamlist COMMA callparam
@@ -226,7 +231,43 @@ def p_ex_loop(p):
     p[0]= ('loop',p[2],p[4],p[5],p[7],p[8],p[10])
 
 
+############################### LISTS ##########################################
 
+def p_ex_list_def(p):
+    '''expression : LBRACKET expr_list RBRACKET
+    '''
+    p[0] = ('def_list',p[2])
+
+def p_ex_empty_list_def(p):
+    '''expression : LBRACKET RBRACKET
+    '''
+    p[0] = ('def_list',())
+
+def p_list_expr_list1(p):
+    '''expr_list : expr_list COMMA expression
+    '''
+    p[0] = p[1] + (p[3],)
+
+def p_list_expr_list2(p):
+    '''expr_list : expression
+    '''
+    p[0] = (p[1],)
+
+def p_ex_list_get(p):
+    '''expression : expression LBRACKET expression RBRACKET
+    '''
+    p[0] = ('list_get',p[1],p[3])
+
+def p_ex_list_len(p):
+    '''expression : LENGTH expression'''
+    p[0] = ('list_len',p[2])
+
+############################### MISC ###########################################
+
+def p_ex_echo(p):
+    '''expression : ECHO expression
+    '''
+    p[0]= ('echo',p[2])
 
 ############################### ERROR HANDELING ################################
     

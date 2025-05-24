@@ -8,7 +8,7 @@ from Parser import parser
 from Interpreter import evalu
 from Entry import *
 
-state = SymbolTable().push(['x','y','z'])
+state = SymbolTable().push(['x','y','z','f','g','h'])
 
 def outPrint(zahl):
     match(zahl):

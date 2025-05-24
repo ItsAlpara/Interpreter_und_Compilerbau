@@ -56,7 +56,7 @@ def evalu(node, env):
                 case 'and:=':
                     er = evalu(('binop','and',left,right), env)
             env[left[1]].value = er
-            return env[left[1]].value
+            return er
 
         case ['comp_seq', seq]:
             i = len(seq)
@@ -184,39 +184,65 @@ def evalu(node, env):
 
 ####CALL
         case ['ex_call', function, params]:
-            match function[0]:
-                case 'identifier':
-                    (env_f,params_f,expr_f) = evalu(function, env)
-                case 'ex_lambda':
-                    (env_f,params_f,expr_f) = evalu(function, env)
-                case _:
-                    print('error: unknown function')
 
-            parameterlist = []
+            (env_f,params_f,expr_f) = evalu(function, env)
+
+            paramlist = []
             oversupplyvar = None
             env_new = SymbolTable(env_f)
+            new_params = ['paramlist']
 
-            match params_f[0]:
-                case 'paramlist':
-                    for param in params_f[1:]:
-                        parameterlist.append(param[1])
-                case 'paramlist_point':
-                    for param in params_f[1:]:
-                        parameterlist.append(param[1])
-                    oversupplyvar = params_f[2][1]
+            for param in params_f[1]:
+                paramlist.append(param[1])
+            if params_f[0] == 'paramlist_point':
+                oversupplyvar = params_f[2][1]
+                env_new.put(oversupplyvar)
+                env_new[oversupplyvar].value = []
+                new_params = ['paramlist_point']
 
-            for param in params[1:]:
+            for param in params:
                 if param[0] == 'callparam_assignment':
-                    if param[1] in parameterlist:
-                        val = evalu(param[2])
-                        env_new.push(param[1])
+                    if param[1][1] in paramlist:
+                        val = evalu(param[2], env_new)
+                        env_new.put(param[1][1])
+                        env_new[param[1][1]].value = val
+                        paramlist.remove(param[1][1])
+            for param in params:
+                if param[0] == 'callparam_expr':
+                    val = evalu(param[1], env_new)
+                    try:
+                        p = paramlist.pop(0)
+                        env_new.put(p)
+                        env_new[p].value = val
+                    except IndexError:
+                        if oversupplyvar is not None:
+                            env_new[oversupplyvar].value.append(val)
+                        else:
+                            print('error: oversupply variable not found')
+            if paramlist:
+                print(paramlist)
+                templist = []
+                for param in paramlist:
+                    templist.append(('identifier',param))
+                new_params.append(tuple(templist))
+                return (env_new,tuple(new_params),expr_f)
+            return evalu(expr_f, env_new)
+
+    ############## LISTS
+        case['def_list',elements]:
+            ele = []
+            for element in elements:
+                ele.append(evalu(element, env))
+            return ele
+
+        case['list_get',lis,index]:
+            return evalu(lis, env)[evalu(index, env)]
+
+        case['list_len',lis]:
+            return len(evalu(lis, env))
 
 
-            return None
-
-
-
-    ##############
+    ############## CONTROL STRUCTS
 
         case['if',cond,expr]:
             return evalu(expr, env) if evalu(cond, env) else None
@@ -238,7 +264,15 @@ def evalu(node, env):
             high = rexpr_eval if brack1[1] == '[' else rexpr_eval + 1
             i = low
             for _ in range(low, high):
-                env[ident[1]] = i
+                env[ident[1]].value = i
                 i = i + 1
                 ret = evalu(expr, env)
             return ret
+
+    ################## MISC
+        case['echo',expr]:
+            val = evalu(expr, env)
+            print(val)
+            return val
+
+    return None

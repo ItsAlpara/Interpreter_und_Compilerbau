@@ -17,6 +17,8 @@ reserved = {
 'fuer':'LOOP',
 'in':'IN',
 'lambda' : 'LAMBDA',
+'len':'LENGTH',
+'echo':'ECHO',
 }
 
 
