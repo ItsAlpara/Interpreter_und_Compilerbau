@@ -269,6 +269,13 @@ def p_ex_echo(p):
     '''
     p[0]= ('echo',p[2])
 
+
+############################ LET ##############################################
+def p_exp_let(p):
+    '''expression : LET identifier EQUAL expression IN expression POINT
+    '''
+    p[0] = ('exp_let',p[2],p[4],p[6])
+
 ############################### ERROR HANDELING ################################
     
 def p_error(p):

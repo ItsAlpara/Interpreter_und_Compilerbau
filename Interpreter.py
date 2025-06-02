@@ -178,11 +178,11 @@ def evalu(node, env):
         case['ex_sem',value]:
             return evalu(value, env)
 
-####LAMBDA
+#### LAMBDA ##############
         case['ex_lambda',params,expr]:
             return (env,params,expr)
 
-####CALL
+#### CALL ################
         case ['ex_call', function, params]:
 
             (env_f,params_f,expr_f) = evalu(function, env)
@@ -220,7 +220,6 @@ def evalu(node, env):
                         else:
                             print('error: oversupply variable not found')
             if paramlist:
-                print(paramlist)
                 templist = []
                 for param in paramlist:
                     templist.append(('identifier',param))
@@ -228,7 +227,7 @@ def evalu(node, env):
                 return (env_new,tuple(new_params),expr_f)
             return evalu(expr_f, env_new)
 
-    ############## LISTS
+############## LISTS ############################
         case['def_list',elements]:
             ele = []
             for element in elements:
@@ -242,7 +241,7 @@ def evalu(node, env):
             return len(evalu(lis, env))
 
 
-    ############## CONTROL STRUCTS
+############## CONTROL STRUCTS ###################
 
         case['if',cond,expr]:
             return evalu(expr, env) if evalu(cond, env) else None
@@ -261,7 +260,7 @@ def evalu(node, env):
             rexpr_eval = evalu(rexpr, env)
             ret = None
             low = lexpr_eval if brack1[1] == '[' else lexpr_eval + 1
-            high = rexpr_eval if brack1[1] == '[' else rexpr_eval + 1
+            high = rexpr_eval if brack2[1] == '[' else rexpr_eval + 1
             i = low
             for _ in range(low, high):
                 env[ident[1]].value = i
@@ -269,7 +268,13 @@ def evalu(node, env):
                 ret = evalu(expr, env)
             return ret
 
-    ################## MISC
+################## LET
+        case['exp_let',ident,val,body]:
+            env_new = env.push(ident[1])
+            evalu(('assign',':=',ident,val),env_new)
+            return evalu(body, env_new)
+
+################## MISC
         case['echo',expr]:
             val = evalu(expr, env)
             print(val)
