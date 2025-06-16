@@ -237,25 +237,25 @@ def p_ex_loop(p):
     p[0]= ('loop',p[2],p[4],p[5],p[7],p[8],p[10])
 
 
-############################### LISTS ##########################################
+############################### ARRAY ##########################################
 
-def p_ex_list_def(p):
-    '''expression : LBRACKET expr_list RBRACKET
+def p_ex_arr_def(p):
+    '''expression : LBRACKET expr_arr RBRACKET
     '''
-    p[0] = ('def_list',p[2])
+    p[0] = ('def_arr',p[2])
 
-def p_ex_empty_list_def(p):
+def p_ex_empty_arr_def(p):
     '''expression : LBRACKET RBRACKET
     '''
-    p[0] = ('def_list',())
+    p[0] = ('def_arr',())
 
-def p_list_expr_list1(p):
-    '''expr_list : expr_list COMMA expression
+def p_arr_expr_arr1(p):
+    '''expr_arr : expr_arr COMMA expression
     '''
     p[0] = p[1] + (p[3],)
 
-def p_list_expr_list2(p):
-    '''expr_list : expression
+def p_arr_expr_arr2(p):
+    '''expr_arr : expression
     '''
     p[0] = (p[1],)
 
@@ -267,6 +267,28 @@ def p_ex_list_get(p):
 def p_ex_list_len(p):
     '''expression : LENGTH expression'''
     p[0] = ('list_len',p[2])
+
+############################### LISTS ##########################################
+
+def p_ex_list(p):
+    '''expression : LPAREN expr_list RPAREN
+    '''
+    p[0] = ('def_list',p[2])
+
+def p_ex_empty_list(p):
+    '''expression : NIL
+    '''
+    p[0] = ('def_list',None)
+
+def p_ex_list_def1(p):
+    '''expr_list : expression COMMA expr_list
+    '''
+    p[0] = (p[1],p[3])
+
+def p_ex_list_def2(p):
+    '''expr_list : expression
+    '''
+    p[0] = (p[1],None)
 
 ############################### MISC ###########################################
 

@@ -230,7 +230,7 @@ def evalu(node, env):
             return evalu(expr_f, env_new)
 
 ############## LISTS ############################
-        case['def_list',elements]:
+        case['def_arr',elements]:
             ele = []
             for element in elements:
                 ele.append(evalu(element, env))

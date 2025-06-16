@@ -20,6 +20,7 @@ reserved = {
 'länge':'LENGTH',
 'echo':'ECHO',
 'sei' : 'LET',
+'leere' : 'NIL',
 }
 
 
@@ -33,7 +34,7 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'LESS_EQUAL_ASSIGN','GREATER_EQUAL_ASSIGN','EQUAL_ASSIGN'
          ,'NOT_EQUAL_ASSIGN','OR_ASSIGN','XOR_ASSIGN','AND_ASSIGN'
          ,'LBRACE','RBRACE','SEMICOLON','POINT','COMMA','LBRACKET','RBRACKET'
-         ,'ARROW','COLON','STRING'] + list(reserved.values())
+         ,'ARROW','COLON','STRING','AMPERSAND'] + list(reserved.values())
 
 
 ##### Basics #####
@@ -128,6 +129,7 @@ t_RBRACKET = r'\]'
 
 t_STRING = r'("[^"]*")|' r"('[^']*')"
 
+t_AMPERSAND = r'&'
 
 ######### SEQUENCE ##############
 t_SEMICOLON = r';'
