@@ -260,7 +260,7 @@ def evalu(node, env):
             rexpr_eval = evalu(rexpr, env)
             ret = None
             low = lexpr_eval if brack1[1] == '[' else lexpr_eval + 1
-            high = rexpr_eval if brack1[1] == '[' else rexpr_eval + 1
+            high = rexpr_eval if brack2[1] == '[' else rexpr_eval + 1
             i = low
             for _ in range(low, high):
                 env[ident[1]].value = i
