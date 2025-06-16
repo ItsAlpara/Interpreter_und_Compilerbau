@@ -178,11 +178,11 @@ def evalu(node, env):
         case['ex_sem',value]:
             return evalu(value, env)
 
-####LAMBDA
+#### LAMBDA ##############
         case['ex_lambda',params,expr]:
             return (env,params,expr)
 
-####CALL
+#### CALL ################
         case ['ex_call', function, params]:
 
             (env_f,params_f,expr_f) = evalu(function, env)
@@ -227,7 +227,7 @@ def evalu(node, env):
                 return (env_new,tuple(new_params),expr_f)
             return evalu(expr_f, env_new)
 
-    ############## LISTS
+############## LISTS ############################
         case['def_list',elements]:
             ele = []
             for element in elements:
@@ -241,7 +241,7 @@ def evalu(node, env):
             return len(evalu(lis, env))
 
 
-    ############## CONTROL STRUCTS
+############## CONTROL STRUCTS ###################
 
         case['if',cond,expr]:
             return evalu(expr, env) if evalu(cond, env) else None
@@ -268,7 +268,13 @@ def evalu(node, env):
                 ret = evalu(expr, env)
             return ret
 
-    ################## MISC
+################## LET
+        case['exp_let',ident,val,body]:
+            env_new = env.push(ident[1])
+            evalu(('assign',':=',ident,val),env_new)
+            return evalu(body, env_new)
+
+################## MISC
         case['echo',expr]:
             val = evalu(expr, env)
             print(val)

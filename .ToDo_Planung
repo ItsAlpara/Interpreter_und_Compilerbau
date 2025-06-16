@@ -125,14 +125,69 @@ g(3)
 f=lambda(x):lambda(y):x+y
 f(2)(3)
 
+<---------------------------------------------------------------------------->
+
+let a=2+3 in a*a = 25
+x = let a=2+3 in a*a
+'print x =' 25
+
+y = letf = lambda(x): x*x in f
+
+let ist ein Lambda Ausdruck bei dem die Bindung des Wertes eine Parameters sofort erfolgt.
+(lambda(x): x*x)(5)
+
+Beispiel:
+let x = x*y in x*x
+linkes x ist das neue environment und das rechte x ist in dem alten. Das alte ist aber der Globale Wert.
+Das neue x ist nur solange "am Leben", bis der Scope vorbei ist.
+
+Formale Semantik von LET
+Sem(let v = expr1 in expr2,U;S) = Sem(expr2,U',S'')
+(x,S') = Sem(expr1,U;S)
+U' = U[v:nxt(S')]
+S'' = S'[U'[v]:x]
+
+Keine rekursiven Funktionen möglich.
+Lösung:
+
+letrec
+Wie let in Parser und Lexer
+
+Interpreter:
 
 
+Semantik:
+Sem(letrec v=val in body,U;S) = Sem(body,U';S'')
+U'=U[x:nxt(S)
+(x,S') = Sem(val,U';S')
+S'' = S'[U'[v]:x]
 
+##### Implementierung von Datentypen
+Strings, Character & Listen
 
+Beispiele: "abc" und 'a'
+          (1,2,3) -< (1,(2,(3,None)))  <- Cons-Zellen besteht aus (2,*) *-> nächste Cons Zelle
+          nil -> None
 
+Implementierung:
+Lexer
+1Tokens: Character & string
+2Tokens: Nil, car, cdr, cons
 
+1t_string = r'\"(\\.|[^\\"])*\"'
+1t_Character = '\'([^\\\n]|(\\.))??\'' oder r"'[^']*'"
 
+Parser
+1rule_func('string', exp : string, lambda p: (string,p[1][1:-1]
+1rule_char('string', exp : character, lambda p: (string,p[1][1]
 
+2rule_list(expression_list, expr, comma, trailing_separator='disallow')
+2Siehe Fotos
+
+Interpreter
+1case string | char,s:
+1return s
+2Siehe Fotos
 
 
 
