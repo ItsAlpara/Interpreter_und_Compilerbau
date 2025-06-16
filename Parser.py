@@ -11,8 +11,9 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE', 'CEIL_DIVIDE', 'FLOOR_DIVIDE', 'MODULO'),
     ('left', 'POWER','EXPONENTIAL'),
-    ('left', 'IMAGINARY','CALL'),
     ('right', 'NOT', 'UPLUS', 'UMINUS','LENGTH','ECHO'),
+    ('left', 'IMAGINARY','LIST_GET'),
+    ('right','LPAREN'),
     ('nonassoc', 'IDENT_EXPR'),
 )
 
@@ -180,7 +181,7 @@ def p_lambda_paramlist_fin3(p):
 
 #################################  CALL ####################################################
 def p_ex_call(p):
-    ''' expression : expression LPAREN callparamlist RPAREN %prec CALL
+    ''' expression : expression LPAREN callparamlist RPAREN
     '''
     p[0] = ('ex_call',p[1],p[3])
 
@@ -254,7 +255,7 @@ def p_list_expr_list2(p):
     p[0] = (p[1],)
 
 def p_ex_list_get(p):
-    '''expression : expression LBRACKET expression RBRACKET
+    '''expression : expression LBRACKET expression RBRACKET %prec LIST_GET
     '''
     p[0] = ('list_get',p[1],p[3])
 

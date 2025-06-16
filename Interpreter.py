@@ -189,7 +189,7 @@ def evalu(node, env):
 
             paramlist = []
             oversupplyvar = None
-            env_new = SymbolTable(env_f)
+            env_new = SymbolTable(parent=env_f)
             new_params = ['paramlist']
 
             for param in params_f[1]:
@@ -220,7 +220,6 @@ def evalu(node, env):
                         else:
                             print('error: oversupply variable not found')
             if paramlist:
-                print(paramlist)
                 templist = []
                 for param in paramlist:
                     templist.append(('identifier',param))
