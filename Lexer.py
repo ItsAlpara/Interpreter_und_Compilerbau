@@ -33,7 +33,7 @@ tokens = ['IDENTIFIER','FLOAT','BIN','HEX','DEC','PLUS','MINUS'
          ,'LESS_EQUAL_ASSIGN','GREATER_EQUAL_ASSIGN','EQUAL_ASSIGN'
          ,'NOT_EQUAL_ASSIGN','OR_ASSIGN','XOR_ASSIGN','AND_ASSIGN'
          ,'LBRACE','RBRACE','SEMICOLON','POINT','COMMA','LBRACKET','RBRACKET'
-         ,'ARROW','COLON'] + list(reserved.values())
+         ,'ARROW','COLON','STRING'] + list(reserved.values())
 
 
 ##### Basics #####
@@ -125,6 +125,8 @@ t_POINT = r'\.'
 t_COMMA = r','
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
+
+t_STRING = r'("[^"]*")|' r"('[^']*')"
 
 
 ######### SEQUENCE ##############

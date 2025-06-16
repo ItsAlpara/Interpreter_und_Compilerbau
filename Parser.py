@@ -30,6 +30,11 @@ def p_ex_float(p):
     '''
     p[0] = ('float', p[1])
 
+def p_ex_string(p):
+    '''expression : STRING
+    '''
+    p[0] = ('string',p[1])
+
 
 def p_identifier(p):
     '''identifier : IDENTIFIER

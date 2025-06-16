@@ -11,6 +11,8 @@ def evalu(node, env):
 
         case ['float', value]:
             return float(value)
+        case ['string', value]:
+            return str(value[1:-1])
 
         case ['assign', op, left, right]:
             er = 0
