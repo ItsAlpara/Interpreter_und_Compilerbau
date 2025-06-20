@@ -225,16 +225,10 @@ def p_ex_while(p):
     '''
     p[0] = ('while',p[2],p[5])
 
-def p_brackets(p):
-    '''brack : LBRACKET
-             | RBRACKET
-    '''
-    p[0] = ('brack',p[1])
-
 def p_ex_loop(p):
-    '''expression : LOOP identifier IN brack expression COMMA expression brack WDH expression POINT
+    '''expression : LOOP identifier IN expression WDH expression POINT
     '''
-    p[0]= ('loop',p[2],p[4],p[5],p[7],p[8],p[10])
+    p[0]= ('loop',p[2],p[4],p[6])
 
 
 ############################### ARRAY ##########################################
@@ -242,12 +236,12 @@ def p_ex_loop(p):
 def p_ex_arr_def(p):
     '''expression : LBRACKET expr_arr RBRACKET
     '''
-    p[0] = ('def_arr',p[2])
+    p[0] = ('arr',p[2])
 
 def p_ex_empty_arr_def(p):
     '''expression : LBRACKET RBRACKET
     '''
-    p[0] = ('def_arr',())
+    p[0] = ('arr',())
 
 def p_arr_expr_arr1(p):
     '''expr_arr : expr_arr COMMA expression
@@ -264,6 +258,11 @@ def p_ex_list_get(p):
     '''
     p[0] = ('list_get',p[1],p[3])
 
+def p_ex_list_get_plus(p):
+    '''expression : expression LBRACKET PLUS RBRACKET %prec LIST_GET
+    '''
+    p[0] = ('rest_list_get',p[1])
+
 def p_ex_list_len(p):
     '''expression : LENGTH expression'''
     p[0] = ('list_len',p[2])
@@ -273,12 +272,12 @@ def p_ex_list_len(p):
 def p_ex_list(p):
     '''expression : LPAREN expr_list RPAREN
     '''
-    p[0] = ('def_list',p[2])
+    p[0] = ('list',p[2])
 
 def p_ex_empty_list(p):
     '''expression : NIL
     '''
-    p[0] = ('def_list',None)
+    p[0] = None
 
 def p_ex_list_def1(p):
     '''expr_list : expression COMMA expr_list
@@ -289,6 +288,16 @@ def p_ex_list_def2(p):
     '''expr_list : expression
     '''
     p[0] = (p[1],None)
+
+def p_ex_cons(p):
+    '''expression : expression AMPERSAND expression 
+    '''
+    p[0]=('cons',p[1],p[3])
+
+def p_ex_list_op(p):
+    '''expression : LIST expression
+    '''
+    p[0] = ('list',(p[2],None))
 
 ############################### MISC ###########################################
 

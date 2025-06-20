@@ -230,17 +230,64 @@ def evalu(node, env):
             return evalu(expr_f, env_new)
 
 ############## LISTS ############################
-        case['def_arr',elements]:
+        case['arr',elements]:
             ele = []
             for element in elements:
                 ele.append(evalu(element, env))
             return ele
 
-        case['list_get',lis,index]:
-            return evalu(lis, env)[evalu(index, env)]
+        case['list',val]:
+            def make_list(val):
+                (car,cdr) = val
+                if cdr == None:
+                    return (evalu(car,env),None)
+                return (evalu(car,env),make_list(cdr))
+            return make_list(val)
 
+        case['cons',val1,val2]:
+            eval1 = evalu(val1,env)
+            eval2 = evalu(val2,env)
+            return (eval1,eval2)
+            
+        case None:
+            return None
+
+        case['list_get',lis,index]:
+            val = evalu(lis,env)
+            idx = evalu(index,env)
+            if type(val)==list:
+                return val[idx]
+            if type(val)==tuple:
+                def get_list(l,i):
+                    (car,cdr) = l
+                    if i == 0:
+                        return car
+                    return get_list(cdr,i-1)
+                return get_list(val,idx)
+
+        case['rest_list_get',lis]:
+            val = evalu(lis,env)
+            if val == None:
+                return None
+            if type(val) == list:
+                return val[1:]
+            if type(val) == tuple:
+                (car,cdr) = val
+                return cdr
+                
         case['list_len',lis]:
-            return len(evalu(lis, env))
+            val = evalu(lis,env)
+            if val == None:
+                return 0
+            if type(val) == list:
+                return len(evalu(lis, env))
+            if type(val) == tuple:
+                def get_len(l):
+                    (car,cdr) = l
+                    if cdr == None:
+                        return 1
+                    return get_len(cdr) + 1
+                return get_len(val)
 
 
 ############## CONTROL STRUCTS ###################
@@ -257,21 +304,35 @@ def evalu(node, env):
                 ret = evalu(expr, env)
             return ret
 
-        case['loop',ident,brack1,lexpr,rexpr,brack2,expr]:
+        case['loop',ident,lexpr,expr]:
+            env_new = env.push(ident[1])
             lexpr_eval = evalu(lexpr, env)
-            rexpr_eval = evalu(rexpr, env)
             ret = None
-            low = lexpr_eval if brack1[1] == '[' else lexpr_eval + 1
-            high = rexpr_eval if brack2[1] == '[' else rexpr_eval + 1
-            i = low
-            for _ in range(low, high):
-                env[ident[1]].value = i
-                i = i + 1
-                ret = evalu(expr, env)
-            return ret
+            if lexpr_eval == None:
+                return ret
+            if type(lexpr_eval) == list: #TODO 2..4 arrays zulassen
+                for i in lexpr_eval:
+                    env_new[ident[1]].value = i
+                    ret = evalu(expr, env_new)
+                return ret
+            if type(lexpr_eval) == tuple:
+                def get_len(l):
+                    (car,cdr) = l
+                    if cdr == None:
+                        return 1
+                    return get_len(cdr) + 1
+                list_len = get_len(lexpr_eval)
+                i = lexpr_eval
+                for _ in range(0,list_len):
+                    env_new[ident[1]].value = i
+                    ret = evalu(expr,env_new)
+                    (car,cdr) = i
+                    i = cdr
+                return ret
+                    
 
 ################## LET
-        case['exp_let',ident,val,body]:
+        case['exp_let',ident,val,body]:    #TODO mehr parameter zulassen
             env_new = env.push(ident[1])
             evalu(('assign',':=',ident,val),env_new)
             return evalu(body, env_new)

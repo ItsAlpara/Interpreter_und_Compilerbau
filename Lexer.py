@@ -17,10 +17,11 @@ reserved = {
 'fuer':'LOOP',
 'in':'IN',
 'lambda' : 'LAMBDA',
-'länge':'LENGTH',
+'len':'LENGTH',
 'echo':'ECHO',
 'sei' : 'LET',
 'leere' : 'NIL',
+'liste' : 'LIST',
 }
 
 
