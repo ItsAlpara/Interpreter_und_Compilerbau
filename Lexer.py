@@ -22,6 +22,7 @@ reserved = {
 'sei' : 'LET',
 'leere' : 'NIL',
 'liste' : 'LIST',
+'strukt': 'STRUCT',
 }
 
 

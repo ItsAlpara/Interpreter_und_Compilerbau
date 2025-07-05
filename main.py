@@ -2,6 +2,7 @@ from Lexer import lexer
 from Parser import parser
 from Interpreter import evalu
 from Entry import *
+import readline
 
 state = SymbolTable().push(['x','y','z','f','g','h'])
 

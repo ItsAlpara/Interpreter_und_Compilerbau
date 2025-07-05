@@ -2,6 +2,7 @@ from Lexer import tokens
 from ply.yacc import yacc
 
 precedence = (
+    ('left', 'LAMBDAEXPR'),
     ('right', 'ASSIGN'),
     ('left', 'OR'),
     ('left', 'XOR'),
@@ -11,9 +12,10 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'DIVIDE', 'CEIL_DIVIDE', 'FLOOR_DIVIDE', 'MODULO'),
     ('left', 'POWER','EXPONENTIAL'),
-    ('right', 'NOT', 'UPLUS', 'UMINUS','LENGTH','ECHO'),
+    ('left', 'AMPERSAND'),
+    ('right', 'NOT', 'UPLUS', 'UMINUS','LENGTH','ECHO','LIST'),
     ('left', 'IMAGINARY','LIST_GET'),
-    ('right','LPAREN'),
+    ('right','LPAREN','RPAREN'),
     ('nonassoc', 'IDENT_EXPR'),
 )
 
@@ -155,7 +157,7 @@ def p_sequence_ex_sem_seq(p):
 ############################### LAMBDA #########################################
 
 def p_lambda_ex(p):
-    ''' expression : LAMBDA LPAREN paramlist RPAREN ARROW expression POINT
+    ''' expression : LAMBDA LPAREN paramlist RPAREN ARROW expression %prec LAMBDAEXPR
     '''
     p[0] = ('ex_lambda',p[3],p[6])
 
@@ -230,6 +232,10 @@ def p_ex_loop(p):
     '''
     p[0]= ('loop',p[2],p[4],p[6])
 
+def p_ex_loop_point(p):
+    '''expression : LOOP identifier IN expression POINT POINT expression WDH expression POINT
+    '''
+    p[0]=('pointloop',p[2],p[4],p[7],p[9])
 
 ############################### ARRAY ##########################################
 
@@ -309,10 +315,41 @@ def p_ex_echo(p):
 
 ############################ LET ##############################################
 def p_exp_let(p):
-    '''expression : LET identifier EQUAL expression IN expression POINT
+    '''expression : LET letlist IN expression POINT
     '''
-    p[0] = ('exp_let',p[2],p[4],p[6])
+    p[0] = ('exp_let',p[2],p[4])
 
+def p_letlist(p):
+    '''letlist : identifier EQUAL expression
+    '''
+    p[0] = ((p[1],p[3]),)
+    
+def p_letlist2(p):
+    '''letlist : letlist COMMA identifier EQUAL expression
+    '''
+    p[0] = p[1] + ((p[3],p[5]),)
+
+############################### STRUCTS ########################################
+def p_exp_struct(p):
+    '''expression : STRUCT LBRACE idenlist RBRACE
+    '''
+    p[0] = ('struct',p[3])
+
+def p_idenlist1(p):
+    '''idenlist : identifier COLON expression
+    '''
+    p[0] = ((p[1],p[3]),)
+
+def p_idenlist2(p):
+    '''idenlist : idenlist COMMA identifier COLON expression
+    '''
+    p[0] = p[1] + ((p[3],p[5]),)
+
+def p_exp_struct_access(p):
+    '''expression : expression POINT identifier
+    '''
+    p[0] = ('structaccess',p[1],p[3])
+    
 ############################### ERROR HANDELING ################################
     
 def p_error(p):

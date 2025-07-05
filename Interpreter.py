@@ -5,15 +5,12 @@ def evalu(node, env):
     match node:
         case ['identifier',value]:
             return env[value].value
-
         case ['int', value]:
             return int(value)
-
         case ['float', value]:
             return float(value)
         case ['string', value]:
             return str(value[1:-1])
-
         case ['assign', op, left, right]:
             er = 0
             match op:
@@ -205,13 +202,13 @@ def evalu(node, env):
             for param in params:
                 if param[0] == 'callparam_assignment':
                     if param[1][1] in paramlist:
-                        val = evalu(param[2], env_new)
+                        val = evalu(param[2], env)
                         env_new.put(param[1][1])
                         env_new[param[1][1]].value = val
                         paramlist.remove(param[1][1])
             for param in params:
                 if param[0] == 'callparam_expr':
-                    val = evalu(param[1], env_new)
+                    val = evalu(param[1], env)
                     try:
                         p = paramlist.pop(0)
                         env_new.put(p)
@@ -310,7 +307,7 @@ def evalu(node, env):
             ret = None
             if lexpr_eval == None:
                 return ret
-            if type(lexpr_eval) == list: #TODO 2..4 arrays zulassen
+            if type(lexpr_eval) == list:
                 for i in lexpr_eval:
                     env_new[ident[1]].value = i
                     ret = evalu(expr, env_new)
@@ -329,13 +326,39 @@ def evalu(node, env):
                     (car,cdr) = i
                     i = cdr
                 return ret
-                    
+
+        case['pointloop',ident,low,high,expr]:
+            env_new = env.push(ident[1])
+            ret = None
+            loweval = evalu(low,env)
+            higheval = evalu(high,env)
+            for i in range(loweval,higheval+1):
+                env_new[ident[1]].value = i
+                ret = evalu(expr, env_new)
+            return ret
 
 ################## LET
-        case['exp_let',ident,val,body]:    #TODO mehr parameter zulassen
-            env_new = env.push(ident[1])
-            evalu(('assign',':=',ident,val),env_new)
+        case['exp_let',letlist,body]:
+            identlist = [name[1] for name, _ in letlist]
+            env_new = env.push(identlist)
+            for (name, expr) in letlist:
+                value = evalu(expr, env_new)
+                env_new[name[1]].value = value
             return evalu(body, env_new)
+
+################## STRUCTS
+        case['struct',idexprlist]:
+            struct=[]
+            for ele in idexprlist:
+                struct.append((ele[0][1],evalu(ele[1],env)))
+            return struct
+
+        case['structaccess',structexpr,ident]:
+            struct = evalu(structexpr,env)
+            for ele in struct:
+                if ele[0]==ident[1]:
+                    return ele[1]
+            return None
 
 ################## MISC
         case['echo',expr]:

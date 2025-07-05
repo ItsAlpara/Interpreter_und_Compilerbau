@@ -1,5 +1,6 @@
 class Entry:
-    pass
+    def __init__(self):
+        self.value = None
 
 class SymbolTable:
     def __init__(self, parent=None):
