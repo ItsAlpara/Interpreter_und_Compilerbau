@@ -1,17 +1,26 @@
 import math
+
+from sympy import evaluate
+
 from Entry import *
 
 def evalu(node, env):
     match node:
-        case ['identifier',value]:
-            return env[value].value
+
+########################################################################################################################
+################################### BASICS #############################################################################
+########################################################################################################################
+
+        case ['identifier',value]:      # Im identifier steht der Bezeichner der Variable und der Wert der Variable.
+            return env[value].value     # Diese ist jedoch nur in der Umgebung sichtbar
+
         case ['int', value]:
-            return int(value)
+            return int(value)           # Beim übergeben der Variable vom Paser geben wir den Wert als int cast zurück
+
         case ['float', value]:
-            return float(value)
-        case ['string', value]:
-            return str(value[1:-1])
-        case ['assign', op, left, right]:
+            return float(value)         # Beim übergeben der Variable vom Paser geben wir den Wert als float cast zurück
+
+        case ['assign', op, left, right]:       # Gimmicks, keine Erläuterung, da wie binop nur mit Zuweisung
             er = 0
             match op:
                 case ':=':
@@ -55,301 +64,152 @@ def evalu(node, env):
                 case 'and:=':
                     er = evalu(('binop','and',left,right), env)
             env[left[1]].value = er
-            return er
-
-        case ['comp_seq', seq]:
-            i = len(seq)
-            last_eval = evalu(seq[0], env)
-            value = True
-            temp_value = True
-            for x in range(0,i//2):
-                temp_eval = evalu(seq[2*(x+1)], env)
-                match seq[2*x+1]:
-                    case '<=':
-                        temp_value = last_eval <= temp_eval
-                    case '>=':
-                        temp_value = last_eval >= temp_eval 
-                    case '<':
-                        temp_value = last_eval < temp_eval 
-                    case '>':
-                        temp_value = last_eval > temp_eval 
-                    case '=':
-                        temp_value = last_eval == temp_eval 
-                    case '!=':
-                        temp_value = last_eval != temp_eval
-                value = value and temp_value
-                last_eval = temp_eval
-            return int(value)
-
+            return er #             #
 
         case ['binop', op, left, right]:
-            el = evalu(left, env)
-            er = evalu(right, env)
+            el = evalu(left, env)                       # Links komplett evaluieren vor Operation
+            er = evalu(right, env)                      # Rechts komplett evaluieren vor Operation
             match op:
                 case '+':
-                    return el + er
+                    return el + er                      # Ergebnis der Addition von Links plus Rechts
 
                 case '-':
-                    return el - er
+                    return el - er                      # Ergebnis der Subtraktion von Links minus Rechts
 
                 case '*':
-                    return el * er
+                    return el * er                      # Ergebnis der Multiplikation von Links mal Rechts
 
                 case '|':
-                    return el / er
+                    return el / er                      # Ergebnis der Division Links durch Rechts
 
                 case '/':
-                    return math.ceil(el / er)
+                    return math.ceil(el / er)           # Aufrundung des Ergebnisses der Division Links durch Rechts
 
                 case '\\':
-                    return math.floor(el / er)
+                    return math.floor(el / er)          # Abrundung des Ergebnisses der Division Links durch Rechts
 
                 case '<=':
-                    return int(el <= er)
+                    return int(el <= er)                # Links kleiner gleich rechts
 
                 case '>=':
-                    return int(el >= er)
+                    return int(el >= er)                # Links größer gleich rechts
 
                 case '<':
-                    return int(el < er)
+                    return int(el < er)                 # Links echt kleiner rechts
 
-                case '>':
+                case '>':                               # Links echt größer rechts
                     return int(el > er)
 
-                case '=':
+                case '=':                               # Gleichheit von Links und rechts
                     return int(el == er)
 
-                case '!=':
+                case '!=':                              # Ungleichheit von links und rechts
                     return int(el != er)
 
-                case 'and':
+                case 'and':                             # nur 1, wenn beide True
                     if el == 0 or er == 0:
                         return 0
                     else:
                         return 1
 
                 case 'or':
-                    if el != 0 and er != 0:
+                    if el != 0 and er != 0:             # nur 1, wenn eins von beiden oder beide true
                         return 1
                     else:
                         return 0
 
-                case 'xor':
+                case 'xor':                             # nur eins, wenn beide unterschiedlich
                     if (el != 0 and er != 0) or (el == 0 and er == 0):
                         return 0
                     else:
                         return 1
 
                 case 'mod':
-                    return el % er
+                    return el % er                      # links mod rechts
 
                 case 'E':
-                    return el * (10**er)  # Angepasst E als OP
+                    return el * (10**er)                # Angepasst E als OP
 
-        case ['binop_two', op, left, right]:
-            el = evalu(left, env)
-            er = evalu(right, env)
+        case ['binop_two', op, left, right]:            # POWER !!!!
+            el = evalu(left, env)                       # Zuerst links
+            er = evalu(right, env)                      # und rechts komplett evaluieren
             match(op):
                 case('**'):
-                    return el ** er
-
+                    return el ** er                     #dann POWER!!
 
         case ['post_unop', 'imag', operand]:
             return complex(0,operand[1])
 
-        case ['pre_unop', op, operand]:
+        case ['pre_unop', op, operand]:                 # Vorzeichenregeln
             match op:
-                case '+':
+                case '+':                               # Plus nimmt den Absolutwert
                     return abs(evalu(operand, env))
-                case '-':
+                case '-':                               # Minus dreht jedes mal das Vorzeichen
                     return -evalu(operand, env)
-                case 'not':
+                case 'not':                             # not gibt einen 0 wenn es alles außer 0 ist, sonst 1.
                     return 0 if evalu(operand, env) != 0 else 1
 
-######SEQ
-        case['sequence_body',value]:
-            return evalu(value, env)
+########################################################################################################################
+################################### SEQUENCE ###########################################################################
+########################################################################################################################
 
-        case['ex_sem_seq',left,right]:
-            evalu(left, env)
-            return evalu(right, env)
+        case ['seq',body]:
+            for expr in body[:-1]:              # Wir gehen jede Expression, bis auf die letzte durch und werten diese
+                evalu(expr, env)                # dann aus.
+            return evalu(body[-1], env)         # Hier wird explizit nur noch die letzte ausgewählt und zurückgegeben
 
-        case['ex_sem',value]:
-            return evalu(value, env)
+########################################################################################################################
+################################### CONTROL STRUCTURES #################################################################
+########################################################################################################################
+        case ['if', cond, expr]:                # Wenn cond wahr: return ergebnis, sonst passiert nichts
+            return evalu(expr,env) if evalu( cond, env) == True else None #Prompt: {x:=3;wenn x = 3 gilt, y:=2 .}
 
-#### LAMBDA ##############
-        case['ex_lambda',params,expr]:
-            return (env,params,expr)
+        case ['if_else', cond, expr, expr2]:     # Wenn cond wahr: return ergebnis, sonst return zweites ergebnis
+            return evalu(expr,env) if evalu(cond, env) == True else evalu( expr2, env)
 
-#### CALL ################
-        case ['ex_call', function, params]:
+        case ['while', cond, expr]:             # Wenn cond wahr iteriere, solange die cond wahr ist und evaluiere die
+            result = None                       # expr so lange und gib sie am Ende aus
+            while(cond == True):
+                result = evalu( expr, env)
+            return result
 
-            (env_f,params_f,expr_f) = evalu(function, env)
+        case ['loop',init,end,do]:             # Führe loop so lange bis zum Endwert aus
+            i = int(evalu(init, env))          # Angeben des Initialwertes
+            e = int(evalu(end,env))            # Berechnen des Endergebnisses
+            result = None                      # Anlegen des Rückgabewertes
 
-            paramlist = []
-            oversupplyvar = None
-            env_new = SymbolTable(parent=env_f)
-            new_params = ['paramlist']
+            if i == None: return result                     # Wenn kein Initialwert da ist, geben wir None zurück
 
-            for param in params_f[1]:
-                paramlist.append(param[1])
-            if params_f[0] == 'paramlist_point':
-                oversupplyvar = params_f[2][1]
-                env_new.put(oversupplyvar)
-                env_new[oversupplyvar].value = []
-                new_params = ['paramlist_point']
+            for _ in range(e):
+                result = evalu(do,env)
+            return result
 
-            for param in params:
-                if param[0] == 'callparam_assignment':
-                    if param[1][1] in paramlist:
-                        val = evalu(param[2], env)
-                        env_new.put(param[1][1])
-                        env_new[param[1][1]].value = val
-                        paramlist.remove(param[1][1])
-            for param in params:
-                if param[0] == 'callparam_expr':
-                    val = evalu(param[1], env)
-                    try:
-                        p = paramlist.pop(0)
-                        env_new.put(p)
-                        env_new[p].value = val
-                    except IndexError:
-                        if oversupplyvar is not None:
-                            env_new[oversupplyvar].value.append(val)
-                        else:
-                            print('error: oversupply variable not found')
-            if paramlist:
-                templist = []
-                for param in paramlist:
-                    templist.append(('identifier',param))
-                new_params.append(tuple(templist))
-                return (env_new,tuple(new_params),expr_f)
-            return evalu(expr_f, env_new)
+        case ['pointloop',init,von,bis,do]: # Prompt: {x:=0;fuer x in 2 .. 5 wiederhole x+:=1 .}
+            i = int(evalu(init,env))
+            v = int(evalu(von,env))
+            b = int(evalu(bis,env))
+            result = None
 
-############## LISTS ############################
-        case['arr',elements]:
-            ele = []
-            for element in elements:
-                ele.append(evalu(element, env))
-            return ele
+            if i == None: return result
 
-        case['list',val]:
-            def make_list(val):
-                (car,cdr) = val
-                if cdr == None:
-                    return (evalu(car,env),None)
-                return (evalu(car,env),make_list(cdr))
-            return make_list(val)
+            for _ in range(b-v):
+                result = evalu(do, env)
+            return result
 
-        case['cons',val1,val2]:
-            eval1 = evalu(val1,env)
-            eval2 = evalu(val2,env)
-            return (eval1,eval2)
-            
-        case None:
+
+########################################################################################################################
+################################### LAMBDA #############################################################################
+########################################################################################################################
+        case ['lambda',variable,body]:
+            return (env,variable,body)
+
+########################################################################################################################
+################################### CALL ###############################################################################
+########################################################################################################################
+        case ['call',function,parameter]:
             return None
 
-        case['list_get',lis,index]:
-            val = evalu(lis,env)
-            idx = evalu(index,env)
-            if type(val)==list:
-                return val[idx]
-            if type(val)==tuple:
-                def get_list(l,i):
-                    (car,cdr) = l
-                    if i == 0:
-                        return car
-                    return get_list(cdr,i-1)
-                return get_list(val,idx)
-
-        case['rest_list_get',lis]:
-            val = evalu(lis,env)
-            if val == None:
-                return None
-            if type(val) == list:
-                return val[1:]
-            if type(val) == tuple:
-                (car,cdr) = val
-                return cdr
-                
-        case['list_len',lis]:
-            val = evalu(lis,env)
-            if val == None:
-                return 0
-            if type(val) == list:
-                return len(evalu(lis, env))
-            if type(val) == tuple:
-                def get_len(l):
-                    (car,cdr) = l
-                    if cdr == None:
-                        return 1
-                    return get_len(cdr) + 1
-                return get_len(val)
-
-
-############## CONTROL STRUCTS ###################
-
-        case['if',cond,expr]:
-            return evalu(expr, env) if evalu(cond, env) else None
-            
-        case['if_else',cond,expr1,expr2]:
-            return evalu(expr1, env) if evalu(cond, env) else evalu(expr2, env)
-
-        case['while',cond,expr]:
-            ret = None
-            while(evalu(cond, env)):
-                ret = evalu(expr, env)
-            return ret
-
-        case['loop',ident,lexpr,expr]:
-            env_new = env.push(ident[1])
-            lexpr_eval = evalu(lexpr, env)
-            ret = None
-            if lexpr_eval == None:
-                return ret
-            if type(lexpr_eval) == list:
-                for i in lexpr_eval:
-                    env_new[ident[1]].value = i
-                    ret = evalu(expr, env_new)
-                return ret
-            if type(lexpr_eval) == tuple:
-                def get_len(l):
-                    (car,cdr) = l
-                    if cdr == None:
-                        return 1
-                    return get_len(cdr) + 1
-                list_len = get_len(lexpr_eval)
-                i = lexpr_eval
-                for _ in range(0,list_len):
-                    env_new[ident[1]].value = i
-                    ret = evalu(expr,env_new)
-                    (car,cdr) = i
-                    i = cdr
-                return ret
-
-        case['pointloop',ident,low,high,expr]:
-            env_new = env.push(ident[1])
-            ret = None
-            loweval = evalu(low,env)
-            higheval = evalu(high,env)
-            for i in range(loweval,higheval+1):
-                env_new[ident[1]].value = i
-                ret = evalu(expr, env_new)
-            return ret
-
-################## LET
-        case['exp_let',letlist,body]:
-            identlist = [name[1] for name, _ in letlist]
-            env_new = env.push(identlist)
-            for (name, expr) in letlist:
-                value = evalu(expr, env_new)
-                env_new[name[1]].value = value
-            return evalu(body, env_new)
-
-################## MISC
-        case['echo',expr]:
-            val = evalu(expr, env)
-            print(val)
-            return val
 
     return None
+
+
