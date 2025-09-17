@@ -346,20 +346,6 @@ def evalu(node, env):
                 env_new[name[1]].value = value
             return evalu(body, env_new)
 
-################## STRUCTS
-        case['struct',idexprlist]:
-            struct=[]
-            for ele in idexprlist:
-                struct.append((ele[0][1],evalu(ele[1],env)))
-            return struct
-
-        case['structaccess',structexpr,ident]:
-            struct = evalu(structexpr,env)
-            for ele in struct:
-                if ele[0]==ident[1]:
-                    return ele[1]
-            return None
-
 ################## MISC
         case['echo',expr]:
             val = evalu(expr, env)

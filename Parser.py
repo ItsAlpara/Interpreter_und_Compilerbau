@@ -328,27 +328,6 @@ def p_letlist2(p):
     '''letlist : letlist COMMA identifier EQUAL expression
     '''
     p[0] = p[1] + ((p[3],p[5]),)
-
-############################### STRUCTS ########################################
-def p_exp_struct(p):
-    '''expression : STRUCT LBRACE idenlist RBRACE
-    '''
-    p[0] = ('struct',p[3])
-
-def p_idenlist1(p):
-    '''idenlist : identifier COLON expression
-    '''
-    p[0] = ((p[1],p[3]),)
-
-def p_idenlist2(p):
-    '''idenlist : idenlist COMMA identifier COLON expression
-    '''
-    p[0] = p[1] + ((p[3],p[5]),)
-
-def p_exp_struct_access(p):
-    '''expression : expression POINT identifier
-    '''
-    p[0] = ('structaccess',p[1],p[3])
     
 ############################### ERROR HANDELING ################################
     
