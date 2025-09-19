@@ -135,6 +135,7 @@ def p_ex_comp(p):                                       #Comparator
 ########################################################################################################################
 ################################### SEQUENCE ###########################################################################
 ########################################################################################################################
+
 def p_ex_seq(p):                                        # Aufbau der Sequence: {EXP}
     '''expression : LBRACE sequence RBRACE'''
     p[0]=('seq',p[2])
@@ -143,12 +144,12 @@ def p_ex_seq_body_1(p):                                 # Reduzierungen der Expr
     '''sequence : expression
                 | expression SEMICOLON
     '''
-    p[0]= (p[1])
+    p[0]= (p[1],)
 
 def p_ex_seq_body_2(p):                                 # Mehrere Expressions in der Sequenz: {EXP;EXP}
     '''sequence : expression SEMICOLON sequence
     '''
-    p[0]= (p[1],p[3])
+    p[0]= (p[1],) + p[3]
 
 
 ########################################################################################################################
@@ -230,7 +231,7 @@ def p_lambda_paramlist_fin3(p):     # Spezialfall für einen Parameter hinterein
 def p_ex_call(p):               # Aufbau zum Aufruf eines Calls
     ''' expression : expression LPAREN callparamlist RPAREN
     '''
-    p[0] = ('ex_call',p[1],p[3])
+    p[0] = ('call',p[1],p[3])
 
 def p_call_param_assignment(p):  # Wir weisen beim Funktionsaufruf einer bestimmten Variable einen Wert zu
     ''' callparam : identifier COLON expression
@@ -250,6 +251,27 @@ def p_call_param_list_2(p):     # mehrere Paramter hintereinander möglich mache
     ''' callparamlist :  callparamlist COMMA callparam
     '''
     p[0]= p[1] + (p[3],)
+
+########################################################################################################################
+################################### LET ################################################################################
+########################################################################################################################
+
+def p_exp_let(p):             # Aufbau von LET
+    '''expression : LET letlist IN expression POINT
+    '''
+    p[0] = ('exp_let', p[2], p[4])
+
+
+def p_letlist(p):            # Aufbau der Letlist
+    '''letlist : identifier EQUAL expression
+    '''
+    p[0] = ((p[1], p[3]),)
+
+
+def p_letlist2(p):          # Mehrere Parameter in der letlist zulassen
+    '''letlist : letlist COMMA identifier EQUAL expression
+    '''
+    p[0] = p[1] + ((p[3], p[5]),)
 
 ########################################################################################################################
 ################################### ERROR HANDELING ####################################################################

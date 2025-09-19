@@ -19,7 +19,7 @@ reserved = {                        #Reserved Tokens sind Bezeichnungen, welche 
 'lambda' : 'LAMBDA',
 #'len':'LENGTH',
 #'echo':'ECHO',
-#'sei' : 'LET',
+'sei' : 'LET',
 #'leere' : 'NIL',
 }
 

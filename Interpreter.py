@@ -64,7 +64,7 @@ def evalu(node, env):
                 case 'and:=':
                     er = evalu(('binop','and',left,right), env)
             env[left[1]].value = er
-            return er #             #
+            return er
 
         case ['binop', op, left, right]:
             el = evalu(left, env)                       # Links komplett evaluieren vor Operation
@@ -154,15 +154,16 @@ def evalu(node, env):
 ########################################################################################################################
 
         case ['seq',body]:
-            for expr in body[:-1]:              # Wir gehen jede Expression, bis auf die letzte durch und werten diese
-                evalu(expr, env)                # dann aus.
-            return evalu(body[-1], env)         # Hier wird explizit nur noch die letzte ausgewählt und zurückgegeben
+            for expr in body[:-1]:                 # Wir gehen jede Expression, bis auf die letzte durch und werten diese
+                evalu(expr, env)                   # dann aus.
+            return evalu(body[len(body)-1], env)   # Hier wird explizit nur noch die letzte ausgewählt und zurückgegeben
 
 ########################################################################################################################
 ################################### CONTROL STRUCTURES #################################################################
 ########################################################################################################################
+    
         case ['if', cond, expr]:                # Wenn cond wahr: return ergebnis, sonst passiert nichts
-            return evalu(expr,env) if evalu( cond, env) == True else None #Prompt: {x:=3;wenn x = 3 gilt, y:=2 .}
+            return evalu(expr,env) if evalu( cond, env) == 1 else None #Prompt: {x:=3;wenn x = 3 gilt, y:=2 .}
 
         case ['if_else', cond, expr, expr2]:     # Wenn cond wahr: return ergebnis, sonst return zweites ergebnis
             return evalu(expr,env) if evalu(cond, env) == True else evalu( expr2, env)
@@ -200,14 +201,98 @@ def evalu(node, env):
 ########################################################################################################################
 ################################### LAMBDA #############################################################################
 ########################################################################################################################
-        case ['lambda',variable,body]:
-            return (env,variable,body)
+    
+        case ['lambda',variable,body]:      # Hiermit können neue Funktionen erstellt werden. Hierbei speichert das  
+            return (env,variable,body)      # aktuelle Environment die Symboltabelle. In Variablen stehen jene Variablen 
+                                            # denen im Laufe des Programms Werte zugewiesen werden zu müssen, um die 
+                                            # Funktion aufrufen zu können. Im Body steht das Programm welches 
+                                            # auszuführen ist.
 
 ########################################################################################################################
 ################################### CALL ###############################################################################
 ########################################################################################################################
         case ['call',function,parameter]:
-            return None
+
+            (env_f, variable_f, body_f) = evalu(function, env)  # Wir suchen eine erzeugte Funktion in unserer
+                                                                # aktuellen Symboltabelle und speichern die Symboltabelle,
+                                                                # die Variablen und den body in dem Triple.
+
+            # Wir erzeugen uns ein neues Lambda und weisen diesem die notendigen Informationen zu
+
+            variablelist = []                              # Leere Variablenliste
+            oversupplyvar = None                           # Beim Oversupply alle Argumente in einer Variable speichern
+            env_new = SymbolTable(parent=env_f)            # Neues Environment erzeugen mit aktuellem Env. als Parent
+            rest_variables = ['paramlist']                  # Wichtig für Parser!
+
+            # SETUP DER VARIABLEN
+
+            for variable in variable_f[1]:                 # Für jede Variable (Identifier) in der oberen Variablenliste
+                variablelist.append(variable[1])           # Wir nehmen uns aus diesen Tupeln die Bezeichner und
+                                                           # speichern diese in der Variablenliste
+
+            # OVERSUPPLY
+
+            if variable_f[0] == 'paramlist_point':         # Falls Oversuplly geparsed wurde
+                oversupplyvar = variable_f[2][1]           # Wir nehmen den Bezeichner der Oversupplyvariable
+                env_new.put(oversupplyvar)                 # Wir fügen den Bezeichner in die Symboltabelle hinzu
+                env_new[oversupplyvar].value = []          # Der Bezeichner kann nun eine Liste von Werten
+                                                           # unter dem Bezeichner halten
+                rest_variables = ['paramlist_point']        # Wichtig für Parser!
+
+
+            # UNDERSUPPLY
+
+            for variable in parameter:                      # Für jede Variable, die in Parameter übergeben wurden
+                if variable[0] == 'callparam_assignment':   # Wenn wir dem Bezeichner einen Wert zuweisen wollen
+                    if variable[1][1] in variablelist:      # Wenn der gefundene Bezeichner in der Parameterliste ist
+                        val = evalu(variable[2], env)       # Wir evaluieren den übergebenen Parameter
+                        env_new.put(variable[1][1])         # Wir fügen den Bezeichner aus dem Identifiertupel
+                                                            # in unsere Symboltablle ein
+                        env_new[variable[1][1]].value = val # Wir weisen dem Bezeichner in der Tabelle seinen
+                                                            # evaluierten Wert zu
+                        variablelist.remove(variable[1][1]) # Wir entfernen die Variable aus der noch übrigen
+                                                            # Variablen aus der Variablenliste
+
+            # OVERSUPPLY adding Variables (Zuweisung nach Reihenfolge der Variablenliste)
+
+            for variable in parameter:                      # Für jede Variable, die in Parameter übergeben wurden
+                if variable[0] == 'callparam_expr':         # Parser sagt uns es ist nur eine EXPR
+                    val = evalu(variable[1], env)           # Wir evaluieren den Wert wer übergeben worden ist
+                    try:
+                        p = variablelist.pop(0)             # Wir nehmen des erste Element der Variablenliste heraus
+                        env_new.put(p)                      # Stecken die Variable in unsere neue Symboltabelle
+                        env_new[p].value = val              # und weisen ihm den evaluierten Wert zu
+                    except IndexError:
+                        if oversupplyvar is not None:       # Wenn Oversuppyvariable ist nicht None
+                            env_new[oversupplyvar].value.append(val)        # Wir fügen der Symboltabelle unter dem
+                                                                            # Bezeichner des Oversupply's eine Variable
+                                                                            # zu im Fall, dass Variablenliste leer
+                        else:
+                            print('error: oversupply variable not found')   # Es wurde keine OversupplyVariable gefunden
+                                                                            # wo der Wert hätte hinterlegt werden können
+
+            # Zum Parsen, falls Undersupply vorliegt
+
+            if variablelist:                                    # Wenn die Variablenliste nicht leer
+                templist = []                                   # Temporäre Liste
+                for variable in variablelist:                   # Für jede Variable in der Variablenliste
+                    templist.append(('identifier', variable))   # Bringe die Bezeichner in ihr altes Format als Liste
+                rest_variables.append(tuple(templist))          # Füge diese nun dem für den Parser benötigten Format an
+                return (env_new, tuple(rest_variables), body_f) # Gib das neue environment
+                                                                # mit den Restvariablen und dem body zurück
+            return evalu(body_f, env_new)   #Versuchen mit dem neuen Environment und dem body zu evaluieren
+
+########################################################################################################################
+################################### LET ################################################################################
+########################################################################################################################
+
+        case['exp_let',letlist,body]:                           # Wir bekommen eine Liste von Parametern und einen Body
+            identlist = [name[1] for name, _ in letlist]        # Wir erstellen eine List von allen Bezeichnern
+            env_new = env.push(identlist)                       # Die Bezeichner werden in neue Symboltabelle angelegt
+            for (name, expr) in letlist:                        # Für jedes Tupel Name und Expr in Letlist:
+                value = evalu(expr, env_new)                    # Evaluieren wir den Wert im neuen Environment
+                env_new[name[1]].value = value                  # und legen diesen unter dem Bezeichner in der Tabelle ab
+            return evalu(body, env_new)                         # dann Evaluieren wir das Ergebnis mit dem neuen Env.
 
 
     return None

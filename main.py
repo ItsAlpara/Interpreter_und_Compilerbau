@@ -44,7 +44,7 @@ def outPrint(zahl):
                     if(s == 'exit'):
                         break
                     if(s == 'dict'):
-                        print(state)
+                        print(state.vars)
                         break
                 except EOFError:
                     break
